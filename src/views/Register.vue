@@ -1,23 +1,23 @@
 <template>
-  <div class="login-container" :style="{ backgroundImage: `url(${bgImage})` }">
-    <div class="background-overlay"></div>
+  <div class="register-container">
+    <div class="background-image"></div>
 
-    <div class="login-wrapper">
-      <div class="login-card">
+    <div class="register-wrapper">
+      <div class="register-card">
         <div class="logo-container">
           <div class="logo-icon">
             <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
             </svg>
           </div>
         </div>
 
-        <h2 class="title">Helpdesk Portal</h2>
-        <p class="subtitle">Masuk ke akun Anda</p>
+        <h2 class="title">Daftar Akun Baru</h2>
+        <p class="subtitle">Buat akun Helpdesk Portal Anda</p>
 
-        <div class="form-container">
+        <form @submit.prevent="handleRegister" class="form-container">
           <div class="form-group">
-            <label for="user" class="label">Nama Pengguna</label>
+            <label for="nama" class="label">Nama Lengkap</label>
             <div class="input-wrapper">
               <div class="input-icon">
                 <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -25,18 +25,56 @@
                 </svg>
               </div>
               <input
-                id="user"
-                v-model="form.user"
+                id="nama"
+                v-model="form.nama"
                 type="text"
                 class="input-field"
-                placeholder="Masukkan nama pengguna Anda"
+                placeholder="Masukkan nama lengkap"
                 required
               />
             </div>
           </div>
 
           <div class="form-group">
-            <label for="password" class="label">Kata Sandi</label>
+            <label for="username" class="label">Username</label>
+            <div class="input-wrapper">
+              <div class="input-icon">
+                <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                </svg>
+              </div>
+              <input
+                id="username"
+                v-model="form.username"
+                type="text"
+                class="input-field"
+                placeholder="Masukkan username"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email" class="label">Email</label>
+            <div class="input-wrapper">
+              <div class="input-icon">
+                <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <input
+                id="email"
+                v-model="form.email"
+                type="email"
+                class="input-field"
+                placeholder="Masukkan email"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password" class="label">Password</label>
             <div class="input-wrapper">
               <div class="input-icon">
                 <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -46,66 +84,56 @@
               <input
                 id="password"
                 v-model="form.password"
-                :type="showPassword ? 'text' : 'password'"
+                type="password"
                 class="input-field"
-                placeholder="Masukkan kata sandi Anda"
+                placeholder="Minimal 8 karakter"
                 required
               />
-              <button
-                type="button"
-                class="toggle-password"
-                @click="showPassword = !showPassword"
-              >
-                <svg v-if="showPassword" class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                </svg>
-                <svg v-else class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
-              </button>
             </div>
           </div>
 
-          <div class="remember-forgot">
-            <label class="remember-label">
-              <input type="checkbox" class="checkbox" />
-              <span>Ingat saya</span>
-            </label>
-            <a href="#" class="forgot-link">Lupa kata sandi?</a>
-          </div>
-
-          <div v-if="error" class="error-message">
-            <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span>{{ error }}</span>
+          <div class="form-group">
+            <label for="confirmPassword" class="label">Konfirmasi Password</label>
+            <div class="input-wrapper">
+              <div class="input-icon">
+                <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <input
+                id="confirmPassword"
+                v-model="form.confirmPassword"
+                type="password"
+                class="input-field"
+                placeholder="Ulangi password"
+                required
+              />
+            </div>
           </div>
 
           <button
-            type="button"
-            class="login-btn"
+            type="submit"
+            class="register-btn"
             :disabled="loading"
-            @click="handleLogin"
           >
             <svg v-if="loading" class="spinner" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            <span v-if="loading">Memproses...</span>
+            <span v-if="loading">Mendaftarkan...</span>
             <template v-else>
-              <span>Masuk</span>
+              <span>Daftar Sekarang</span>
               <svg class="arrow-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </template>
           </button>
-        </div>
 
-        <div class="register-link">
-          Belum punya akun? 
-          <router-link to="/register">Daftar di sini</router-link>
-        </div>
+          <div class="login-link">
+            Sudah punya akun? 
+            <router-link to="/login">Login di sini</router-link>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -114,41 +142,36 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import bgImage from '@/assets/backgroundlogin.jpeg'
 
 const router = useRouter()
 const loading = ref(false)
-const error = ref('')
-const showPassword = ref(false)
 
 const form = ref({
-  user: '',
-  password: ''
+  nama: '',
+  username: '',
+  email: '',
+  password: '',
+  confirmPassword: ''
 })
 
-const handleLogin = async () => {
+const handleRegister = async () => {
+  if (form.value.password !== form.value.confirmPassword) {
+    alert('Password tidak cocok!')
+    return
+  }
+  
   loading.value = true
-  error.value = ''
   
   await new Promise(resolve => setTimeout(resolve, 1000))
   
-  try {
-    if (form.value.user === 'admin' && form.value.password === 'password') {
-      alert('Login berhasil!')
-      router.push('/dashboard')
-    } else {
-      error.value = 'Nama pengguna atau kata sandi salah!'
-    }
-  } catch (err) {
-    error.value = 'Terjadi kesalahan saat login'
-  } finally {
-    loading.value = false
-  }
+  alert('Registrasi berhasil! Silakan login.')
+  router.push('/login')
+  loading.value = false
 }
 </script>
 
 <style scoped>
-.login-container {
+.register-container {
   min-height: 100vh;
   display: flex;
   justify-content: flex-start;
@@ -156,20 +179,27 @@ const handleLogin = async () => {
   padding: 2rem;
   position: relative;
   overflow: hidden;
-  background-color: #1a2942;
+  background: #1a2942;
+}
+
+.background-image {
+  position: absolute;
+  inset: 0;
+  background-image: url('/src/assets/backgroundlogin.jpeg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  opacity: 0.4;
 }
 
-.background-overlay {
+.background-image::after {
+  content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(90deg, rgba(26, 41, 66, 0.95) 0%, rgba(26, 41, 66, 0.4) 50%, rgba(26, 41, 66, 0.2) 100%);
-  z-index: 1;
 }
 
-.login-wrapper {
+.register-wrapper {
   position: relative;
   width: 100%;
   max-width: 450px;
@@ -177,7 +207,7 @@ const handleLogin = async () => {
   margin-left: 5%;
 }
 
-.login-card {
+.register-card {
   position: relative;
   background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(20px);
@@ -236,7 +266,7 @@ const handleLogin = async () => {
 .form-container {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
 .form-group {
@@ -288,82 +318,7 @@ const handleLogin = async () => {
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
 }
 
-.toggle-password {
-  position: absolute;
-  right: 1rem;
-  background: none;
-  border: none;
-  color: #9ca3af;
-  cursor: pointer;
-  padding: 0.5rem;
-  display: flex;
-  align-items: center;
-  transition: color 0.3s ease;
-}
-
-.toggle-password:hover {
-  color: #4b5563;
-}
-
-.remember-forgot {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.875rem;
-}
-
-.remember-label {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  color: #6b7280;
-  transition: color 0.3s ease;
-}
-
-.remember-label:hover {
-  color: #111827;
-}
-
-.checkbox {
-  width: 1rem;
-  height: 1rem;
-  margin-right: 0.5rem;
-  accent-color: #2563eb;
-  cursor: pointer;
-}
-
-.forgot-link {
-  color: #2563eb;
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.forgot-link:hover {
-  color: #1e40af;
-}
-
-.error-message {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.875rem;
-  background: #fee;
-  border: 2px solid #fcc;
-  border-radius: 1rem;
-  color: #991b1b;
-  font-size: 0.875rem;
-  font-weight: 500;
-  animation: shake 0.5s ease-in-out;
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-10px); }
-  75% { transform: translateX(10px); }
-}
-
-.login-btn {
+.register-btn {
   width: 100%;
   padding: 1rem;
   background: linear-gradient(135deg, #2563eb, #1e40af);
@@ -379,14 +334,15 @@ const handleLogin = async () => {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  margin-top: 0.5rem;
 }
 
-.login-btn:hover:not(:disabled) {
+.register-btn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 15px 30px rgba(37, 99, 235, 0.4);
 }
 
-.login-btn:disabled {
+.register-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
@@ -413,37 +369,41 @@ const handleLogin = async () => {
   transition: transform 0.3s ease;
 }
 
-.login-btn:hover .arrow-icon {
+.register-btn:hover .arrow-icon {
   transform: translateX(5px);
 }
 
-.register-link {
-  margin-top: 1.5rem;
+.login-link {
+  margin-top: 1rem;
   text-align: center;
   font-size: 0.875rem;
   color: #6b7280;
 }
 
-.register-link a {
+.login-link a {
   color: #2563eb;
   font-weight: 600;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
-.register-link a:hover {
+.login-link a:hover {
   color: #1e40af;
   text-decoration: underline;
 }
 
 @media (max-width: 768px) {
-  .login-wrapper {
+  .register-wrapper {
     margin-left: 0;
     max-width: 100%;
   }
   
-  .background-overlay {
+  .background-image::after {
     background: linear-gradient(180deg, rgba(26, 41, 66, 0.95) 0%, rgba(26, 41, 66, 0.4) 100%);
+  }
+  
+  .register-card {
+    padding: 2rem;
   }
 }
 </style>
