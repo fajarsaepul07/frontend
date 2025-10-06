@@ -12,8 +12,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.8",
+    "apexcharts": "^5.3.5",
     "axios": "^1.12.2",
+    "bootstrap": "^5.3.8",
+    "boxicons": "^2.1.4",
+    "perfect-scrollbar": "^1.5.6",
+    "pinia": "^3.0.3",
     "vue": "^3.5.22",
+    "vue-apexcharts": "^1.7.0",
     "vue-router": "^4.5.1"
   },
   "devDependencies": {

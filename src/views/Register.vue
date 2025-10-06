@@ -13,7 +13,7 @@
         </div>
 
         <h2 class="title">Daftar Akun Baru</h2>
-        <p class="subtitle">Buat akun Helpdesk Portal Anda</p>
+        <p class="subtitle">Buat akun Anda di Helpdesk Portal</p>
 
         <form @submit.prevent="handleRegister" class="form-container">
           <div class="form-group">
@@ -29,14 +29,14 @@
                 v-model="form.nama"
                 type="text"
                 class="input-field"
-                placeholder="Masukkan nama lengkap"
+                placeholder="Masukkan nama lengkap Anda"
                 required
               />
             </div>
           </div>
 
           <div class="form-group">
-            <label for="username" class="label">Username</label>
+            <label for="username" class="label">Nama Pengguna</label>
             <div class="input-wrapper">
               <div class="input-icon">
                 <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -48,14 +48,14 @@
                 v-model="form.username"
                 type="text"
                 class="input-field"
-                placeholder="Masukkan username"
+                placeholder="Pilih nama pengguna Anda"
                 required
               />
             </div>
           </div>
 
           <div class="form-group">
-            <label for="email" class="label">Email</label>
+            <label for="email" class="label">Alamat Email</label>
             <div class="input-wrapper">
               <div class="input-icon">
                 <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -67,14 +67,14 @@
                 v-model="form.email"
                 type="email"
                 class="input-field"
-                placeholder="Masukkan email"
+                placeholder="Masukkan email Anda"
                 required
               />
             </div>
           </div>
 
           <div class="form-group">
-            <label for="password" class="label">Password</label>
+            <label for="password" class="label">Kata Sandi</label>
             <div class="input-wrapper">
               <div class="input-icon">
                 <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -86,14 +86,14 @@
                 v-model="form.password"
                 type="password"
                 class="input-field"
-                placeholder="Minimal 8 karakter"
+                placeholder="Buat kata sandi (minimal 8 karakter)"
                 required
               />
             </div>
           </div>
 
           <div class="form-group">
-            <label for="confirmPassword" class="label">Konfirmasi Password</label>
+            <label for="confirmPassword" class="label">Konfirmasi Kata Sandi</label>
             <div class="input-wrapper">
               <div class="input-icon">
                 <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,7 +105,7 @@
                 v-model="form.confirmPassword"
                 type="password"
                 class="input-field"
-                placeholder="Ulangi password"
+                placeholder="Ulangi kata sandi Anda"
                 required
               />
             </div>
@@ -131,7 +131,7 @@
 
           <div class="login-link">
             Sudah punya akun? 
-            <router-link to="/login">Login di sini</router-link>
+            <router-link to="/login">Masuk di sini</router-link>
           </div>
         </form>
       </div>
@@ -156,7 +156,7 @@ const form = ref({
 
 const handleRegister = async () => {
   if (form.value.password !== form.value.confirmPassword) {
-    alert('Password tidak cocok!')
+    alert('Kata sandi tidak cocok!')
     return
   }
   

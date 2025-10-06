@@ -1,8 +1,3 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
-
 <template>
   <div id="app">
     <router-view />
@@ -10,6 +5,7 @@ import TheWelcome from './components/TheWelcome.vue'
 </template>
 
 <script setup>
+// Kosong aja, nggak perlu import apa-apa di sini
 </script>
 
 <style>
