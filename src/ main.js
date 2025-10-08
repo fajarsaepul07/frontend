@@ -1,37 +1,34 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import router from './router'  // Path ke router/index.js
+import router from './router'
 
-// === Import CSS Global (Urutan Penting: Base dulu, lalu theme) ===
-// Bootstrap dulu (install kalau belum: npm i bootstrap)
+// Import Bootstrap CSS & Icons
 import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap-icons/font/bootstrap-icons.css'
 
-// Sneat Core (kalau file-nya ada di assets/vendor/css/ – download dari Sneat template kalau belum)
-import '@/assets/vendor/css/portal-bootstrap.css'  // Bootstrap override Sneat
-import '@/assets/vendor/css/portal-utilities.css'  // Utilities
-import '@/assets/vendor/css/core.css'              // Core Sneat styles
-import '@/assets/vendor/css/theme-default.css'     // Theme default (warna navbar/sidebar)
+// Import Bootstrap Bundle JS
+import * as bootstrap from 'bootstrap'
 
-// Libs (kalau ada – skip kalau error)
-import '@/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css'  // Scrollbar
-import '@/assets/vendor/libs/apex-charts/apex-charts.css'              // Charts (buat RevenueChart nanti)
+// Import custom CSS
+import './assets/main.css'
 
-// Custom CSS proyekmu
-import '@/assets/css/demo.css'   // Demo styles kalau ada
-import '@/assets/base.css'       // Base dari strukturmu
-import '@/assets/main.css'       // Main dari strukturmu
+const app = createApp(App)
 
-// === Import JS (Setelah CSS) ===
-// Bootstrap JS
+// Make bootstrap available globally
+app.config.globalProperties.$bootstrap = bootstrap
+
+app.use(router)
+app.mount('#app')
+// Import Bootstrap CSS
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap-icons/font/bootstrap-icons.css'
+// Import Bootstrap JS (optional, jika butuh components seperti dropdown, modal)
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 
-// Sneat JS (kalau file-nya ada – download dari Sneat template)
-import '@/assets/vendor/js/helpers.js'  // Helpers (console, etc.)
-import '@/assets/vendor/js/menu.js'     // Menu toggle (sidebar collapse)
-import '@/assets/js/config.js'          // Config (kalau ada)
-import '@/assets/js/main.js'            // Main init (kalau ada)
+// Import custom CSS (jika ada)
+import './assets/main.css'
 
-// === Mount App Sekali Saja (Setelah Semua Import) ===
 const app = createApp(App)
+
 app.use(router)
 app.mount('#app')

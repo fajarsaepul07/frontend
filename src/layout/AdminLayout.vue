@@ -1,63 +1,28 @@
 <template>
-  
-  <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="@/assets/img/favicon/favicon.ico" />
-
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
-    rel="stylesheet"
-  />
-
-  <!-- Icons -->
-  <link rel="stylesheet" href="@/assets/vendor/fonts/boxicons.css" />
-
-  <!-- Core CSS -->
-  <link
-    rel="stylesheet"
-    href="@/assets/vendor/css/core.css"
-    class="template-customizer-core-css"
-  />
-  <link
-    rel="stylesheet"
-    href="@/assets/vendor/css/theme-default.css"
-    class="template-customizer-theme-css"
-  />
-  <link rel="stylesheet" href="@/assets/libs/perfect-scrollbar/perfect-scrollbar.css" />
-
-  <!-- Vendors CSS -->
-  <link rel="stylesheet" href="@/assets/vendor/libs/apex-charts/apex-charts.css" />
-
-  <!-- Page CSS -->
-  <link rel="stylesheet" href="@/assets/vendor/css/pages/dashboard-analytics.css" />
-  <div class="d-flex" style="min-height: 100vh; background: #f8f9fa;">  <!-- Flex utama biar sidebar + content side-by-side -->
+  <div class="layout-wrapper" style="display: flex; min-height: 100vh; background: #f8f9fa;">
     <!-- Sidebar (Fixed width) -->
-    <div style="width: 250px; background: #343a40; color: white; padding: 20px; position: fixed; height: 100vh; overflow-y: auto; z-index: 1000;">
-      <Sidebar />
-    </div>
+    <aside class="sidebar">
+      <Sidebar :isOpen="isSidebarOpen" @toggle="toggleSidebar" @menu-change="onMenuChange" />
+    </aside>
 
-    <!-- Main Content (Offset buat sidebar) -->
-    <div style="margin-left: 250px; flex: 1; padding: 0;">
+    <!-- Main Content (Fills remaining space) -->
+    <div class="main-content flex-grow-1 d-flex flex-column">
       <!-- Navbar (Fixed top) -->
-      <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-3" style="position: fixed; top: 0; width: calc(100% - 250px); z-index: 999;">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-3" style="position: sticky; top: 0; z-index: 999;">
         <Navbar />
       </nav>
 
-      <!-- Content Wrapper (Offset navbar) -->
-      <div style="padding-top: 70px; padding: 20px;">
-        <div class="container-fluid">
-          <router-view />  <!-- Isi Dashboard/Laporan di sini -->
-        </div>
-
-        <!-- Footer -->
-        <Footer />
+      <!-- Content Wrapper -->
+      <div class="content-wrapper flex-grow-1">
+        <router-view />
       </div>
+
+      <!-- Footer -->
+      <Footer />
     </div>
 
-    <!-- Overlay (untuk mobile toggle, sementara skip) -->
-    <div class="layout-overlay layout-menu-toggle"></div>
+    <!-- Overlay (untuk mobile toggle) -->
+    <div class="layout-overlay layout-menu-toggle" v-if="!isSidebarOpen" @click="toggleSidebar"></div>
   </div>
 </template>
 
@@ -66,7 +31,69 @@ import Sidebar from '@/components/ui/Sidebar.vue'
 import Navbar from '@/components/ui/Navbar.vue'
 import Footer from '@/components/ui/Footer.vue'
 
-console.log('AdminLayout mounted! Components:', { Sidebar: !!Sidebar, Navbar: !!Navbar, Footer: !!Footer })  // Debug console
+import { ref } from 'vue'
 
+const isSidebarOpen = ref(true)
 
+const toggleSidebar = () => {
+  isSidebarOpen.value = !isSidebarOpen.value
+}
+
+const onMenuChange = (menuId) => {
+  console.log('Menu changed to:', menuId)
+}
 </script>
+
+<style scoped>
+.layout-wrapper {
+  display: flex;
+  width: 100%;
+}
+
+.sidebar {
+  width: 16rem;
+  flex-shrink: 0;
+  background: #1e293b;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-wrapper {
+  padding: 20px;
+  flex: 1;
+}
+
+.layout-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 900;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    height: 100%;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar[style*="display: block"] {
+    transform: translateX(0);
+  }
+
+  .layout-overlay {
+    display: block;
+  }
+}
+</style>

@@ -1,82 +1,144 @@
 <template>
-  <nav
-    class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
-    id="layout-navbar"
-  >
-    <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
-      <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
-        <i class="bx bx-menu bx-sm"></i>
-      </a>
+  <header class="navbar">
+    <div class="navbar-left">
+      <h2 class="page-title">Dashboard Admin</h2>
+      <p class="page-subtitle">Selamat datang kembali, Admin</p>
     </div>
 
-    <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
-      <!-- Search -->
-      <div class="navbar-nav align-items-center">
-        <div class="nav-item d-flex align-items-center position-relative">
-          <input
-            v-model="search"
-            @focus="showDropdown = true"
-            @blur="showDropdown = false"
-            type="text"
-            class="form-control"
-            placeholder="Search..."
-            style="width: 200px;"
-          />
-          <div
-            v-if="showDropdown && search"
-            class="navbar-dropdown search-dropdown dropdown-menu dropdown-menu-start show"
-            style="top: 100%"
-          >
-            <ul class="dropdown-menu-search">
-              <li>
-                <div class="dropdown-header rounded-top">
-                  <h6 class="mb-0 px-3 py-2 text-xs fw-normal text-body">Search results</h6>
-                </div>
-              </li>
-              <li
-                v-for="result in filteredResults"
-                :key="result.id"
-                class="dropdown-item"
-              >
-                <a class="dropdown-item-contents d-flex flex-column px-3 py-2">
-                  <span class="d-flex align-items-center gap-2 mb-1">
-                    <img
-                      :src="result.avatar"
-                      :alt="`${result.name}-avatar`"
-                      class="rounded w-px-40 h-auto"
-                    />
-                    <span class="text-heading fw-semibold text-truncate me-2">{{ result.name }}</span>
-                  </span>
-                  <small class="text-body text-truncate mb-0">{{ result.title }}</small>
-                </a>
-              </li>
-              <li v-if="filteredResults.length === 0">
-                <div class="dropdown-item px-3 py-2 text-muted">No results found</div>
-              </li>
-            </ul>
-          </div>
-        </div>
+    <div class="navbar-right">
+      <div class="search-box">
+        <input
+          type="text"
+          placeholder="Cari tiket..."
+          v-model="searchQuery"
+          @input="handleSearch"
+        />
+        <i class="icon-search"></i>
       </div>
-      <!-- Bagian lain navbar seperti user menu, notifications, dll. (jika ada di kode lengkap) -->
+
+      <button class="notification-btn">
+        <i class="icon-bell"></i>
+        <span class="badge">3</span>
+      </button>
+
+      <div class="user-avatar">A</div>
     </div>
-  </nav>
+  </header>
 </template>
 
-<script setup>
-import { ref, computed } from 'vue'
-
-const search = ref('')
-const showDropdown = ref(false)
-const searchResults = ref([
-  { id: 1, name: 'John Doe', title: 'Admin', avatar: 'https://i.pravatar.cc/40?img=1' },
-  { id: 2, name: 'Jane Smith', title: 'User', avatar: 'https://i.pravatar.cc/40?img=2' }
-])
-
-const filteredResults = computed(() =>
-  search.value
-    ? searchResults.value.filter(r =>
-        r.name.toLowerCase().includes(search.value.toLowerCase())
-      )
-    : []
-)
+<script>
+export default {
+  name: 'Navbar',
+  data() {
+    return {
+      searchQuery: ''
+    }
+  },
+  methods: {
+    handleSearch() {
+      this.$emit('search', this.searchQuery)
+    }
+  }
+}
 </script>
+
+<style scoped>
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.navbar-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1f2937;
+  margin: 0;
+}
+
+.page-subtitle {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.search-box {
+  position: relative;
+}
+
+.search-box input {
+  width: 16rem;
+  padding: 0.5rem 1rem 0.5rem 2.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.search-box input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.search-box .icon-search {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+}
+
+.notification-btn {
+  position: relative;
+  padding: 0.5rem;
+  background: transparent;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.notification-btn:hover {
+  background: #f3f4f6;
+}
+
+.notification-btn .badge {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  background: #ef4444;
+  color: white;
+  font-size: 0.625rem;
+  padding: 0.125rem 0.375rem;
+  border-radius: 9999px;
+  font-weight: bold;
+}
+
+.user-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: #6366f1;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  cursor: pointer;
+}
+</style>

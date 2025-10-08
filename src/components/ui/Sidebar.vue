@@ -1,127 +1,179 @@
 <template>
-  <!-- Menu -->
-  <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-    <div class="app-brand demo">
-      <a href="index.html" class="app-brand-link">
-        <span class="app-brand-logo demo">
-          <svg
-            width="32"
-            height="22"
-            viewBox="0 0 32 22"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
-              d="M0.00172773 0V6.85398C0.00172773 6.85398 -0.133178 9.01207 1.98092 10.8388L13.6912 21.9964L19.7809 21.9181L18.8042 9.88248L16.4951 7.17289L9.23799 0V0H0.00172773Z"
-              fill="#7367F0"
-            />
-            <path
-              opacity="0.06"
-              fill-rule="evenodd"
-              clip-rule="evenodd"
-              d="M7.69824 16.4364L12.5199 3.23696L16.5541 7.25596L7.69824 16.4364Z"
-              fill="#161616"
-            />
-            <path
-              opacity="0.06"
-              fill-rule="evenodd"
-              clip-rule="evenodd"
-              d="M8.07751 15.9175L13.9419 4.63989L16.5849 7.28475L8.07751 15.9175Z"
-              fill="#161616"
-            />
-            <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
-              d="M7.77295 16.3566L23.6563 0H32V6.88383C32 6.88383 31.8262 9.17836 30.6591 10.4057L19.7824 22H13.6938L7.77295 16.3566Z"
-              fill="#7367F0"
-            />
-          </svg>
-        </span>
-        <span class="app-brand-text demo menu-text fw-bolder ms-2">Sneat</span>
-      </a>
-
-      <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
-        <i class="bx bx-chevron-left bx-sm align-middle"></i>
-      </a>
+  <aside :class="['sidebar', { 'sidebar-collapsed': !isOpen }]">
+    <!-- Header -->
+    <div class="sidebar-header">
+      <h1 v-if="isOpen" class="logo">Helpdesk</h1>
+      <button @click="$emit('toggle')" class="toggle-btn">
+        <i :class="isOpen ? 'fas fa-chevron-left' : 'fas fa-bars'"></i>
+      </button>
     </div>
 
-    <div class="menu-inner-shadow"></div>
+    <!-- Navigation -->
+    <nav class="sidebar-nav">
+      <button
+        v-for="item in menuItems"
+        :key="item.id"
+        @click="setActive(item.id)"
+        :class="['nav-item', { active: activeMenu === item.id }]"
+      >
+        <i :class="item.icon"></i>
+        <span v-if="isOpen">{{ item.label }}</span>
+      </button>
+    </nav>
 
-    <ul class="menu-inner py-1">
-      <!-- Dashboard -->
-      <li class="menu-item" :class="{ active: isActive('dashboard') }">
-        <a href="index.html" class="menu-link">
-          <i class="menu-icon tf-icons bx bx-home-circle"></i>
-          <div data-i18n="Analytics">Dashboards</div>
-        </a>
-      </li>
-
-      <!-- Layouts -->
-      <li class="menu-item">
-        <a href="javascript:void(0);" class="menu-link menu-toggle">
-          <i class="menu-icon tf-icons bx bx-layout"></i>
-          <div data-i18n="Layouts">Layouts</div>
-        </a>
-      </li>
-
-      <!-- Front pages -->
-      <li class="menu-item">
-        <a href="javascript:void(0);" class="menu-link menu-toggle">
-          <i class="menu-icon tf-icons bx bx-face"></i>
-          <div data-i18n="Front Pages">Front Pages</div>
-        </a>
-      </li>
-
-      <!-- Apps & Pages -->
-      <li class="menu-item">
-        <a href="javascript:void(0);" class="menu-link menu-toggle">
-          <i class="menu-icon tf-icons bx bx-grid-alt"></i>
-          <div data-i18n="Apps &amp; Pages">Apps &amp; Pages</div>
-        </a>
-      </li>
-
-      <!-- Components -->
-      <li class="menu-header small text-uppercase"><span class="menu-header-text">Components</span></li>
-
-      <li class="menu-item">
-        <a href="cards.html" class="menu-link">
-          <i class="menu-icon tf-icons bx bx-collection"></i>
-          <div data-i18n="Cards">Cards</div>
-        </a>
-      </li>
-      <li class="menu-item">
-        <a href="javascript:void(0);" class="menu-link menu-toggle">
-          <i class="menu-icon tf-icons bx bx-box"></i>
-          <div data-i18n="User interface">User interface</div>
-        </a>
-      </li>
-    </ul>
+    <!-- Footer -->
+    <div class="sidebar-footer">
+      <button class="logout-btn">
+        <i class="fas fa-sign-out-alt"></i>
+        <span v-if="isOpen">Logout</span>
+      </button>
+    </div>
   </aside>
-  <!-- / Menu -->
 </template>
 
 <script>
 export default {
   name: 'Sidebar',
   props: {
-    activeMenu: {
-      type: String,
-      default: ''
+    isOpen: {
+      type: Boolean,
+      default: true
+    }
+  },
+  data() {
+    return {
+      activeMenu: 'dashboard',
+      menuItems: [
+        { id: 'dashboard', label: 'Dashboard', icon: 'fas fa-home' },
+        { id: 'tickets', label: 'Tiket Management', icon: 'fas fa-ticket-alt' },
+        { id: 'users', label: 'User Management', icon: 'fas fa-users' },
+        { id: 'reports', label: 'Laporan & Analitik', icon: 'fas fa-chart-line' },
+        { id: 'settings', label: 'Pengaturan', icon: 'fas fa-cog' }
+      ]
     }
   },
   methods: {
-    isActive(menuKey) {
-      return this.activeMenu === menuKey;
+    setActive(id) {
+      this.activeMenu = id
+      this.$emit('menu-change', id)
     }
   }
-};
+}
 </script>
 
 <style scoped>
-#layout-menu,
-#layout-menu * {
-  color: #fff !important;
+.sidebar {
+  width: 16rem;
+  background: #1f2937; /* warna abu gelap */
+  color: white;
+  transition: width 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.15);
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+.sidebar-collapsed {
+  width: 5rem;
+}
+
+.sidebar-header {
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin: 0;
+  color: #fff;
+}
+
+.toggle-btn {
+  padding: 0.5rem;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.toggle-btn:hover {
+  color: #60a5fa;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: transparent;
+  border: none;
+  border-radius: 0.5rem;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+  text-align: left;
+}
+
+.nav-item i {
+  width: 1.25rem;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-item.active {
+  background: #2563eb;
+  color: #fff;
+  font-weight: 500;
+}
+
+.sidebar-footer {
+  padding: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: transparent;
+  border: none;
+  border-radius: 0.5rem;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.logout-btn i {
+  width: 1.25rem;
+  text-align: center;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f87171;
 }
 </style>
