@@ -34,10 +34,10 @@
             <span class="text-muted">U</span>
           </button>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-            <li><a class="dropdown-item" href="#">Profile</a></li>
-            <li><a class="dropdown-item" href="#">Settings</a></li>
+            <li><a class="dropdown-item" href="#" @click.prevent="goToProfile">Profile</a></li>
+            <li><a class="dropdown-item" href="#" @click.prevent="goToSettings">Settings</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-danger" href="#">Sign out</a></li>
+            <li><a class="dropdown-item text-danger" href="#" @click.prevent="logout">Sign out</a></li>
           </ul>
         </div>
       </div>
@@ -45,8 +45,38 @@
   </nav>
 </template>
 
+
 <script>
+import axios from 'axios';
+
 export default {
-  name: 'Navbar'
+  name: 'Navbar',
+  methods: {
+    goToProfile() {
+      this.$router.push('/profile');
+    },
+    goToSettings() {
+      this.$router.push('/settings');
+    },
+    async logout() {
+      try {
+        await axios.get('/sanctum/csrf-cookie'); // Ambil CSRF token
+        const response = await axios.post('/logout'); // Sesuaikan dengan baseURL
+        console.log(response.data.message); // "Logout berhasil"
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        this.$router.push('/login');
+      } catch (error) {
+        console.error('Logout failed:', error);
+        if (error.response?.status === 401) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          this.$router.push('/login');
+        } else {
+          alert('Gagal logout: ' + (error.response?.data?.message || 'Unknown error'));
+        }
+      }
+    }
+  }
 }
 </script>
