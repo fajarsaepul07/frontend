@@ -20,12 +20,12 @@
         <div class="p-3">
           <h6 class="mb-3 fw-semibold">Web Helpdesk</h6>
           <nav class="nav flex-column">
-            <a class="nav-link text-white active" href="#">Dasbor</a>
-            <a class="nav-link text-white-50" href="#">Tiket</a>
-            <a class="nav-link text-white-50" href="#">Pelanggan</a>
-            <a class="nav-link text-white-50" href="#">Basis Pengetahuan</a>
-            <a class="nav-link text-white-50" href="#">Laporan</a>
-            <a class="nav-link text-white-50" href="#">Pengaturan</a>
+            <router-link to="/dashboard" class="nav-link text-white">Dasbor</router-link>
+            <router-link to="/user" class="nav-link text-white-50">Tiket</router-link>
+            <a class="nav-link text-white-50" href="#/pelanggan">Pelanggan</a>
+            <router-link to="/report" class="nav-link text-white-50">Report</router-link>
+            <a class="nav-link text-white-50" href="#/laporan">Laporan</a>
+            <a class="nav-link text-white-50" href="#/pengaturan">Pengaturan</a>
           </nav>
         </div>
       </div>
@@ -40,14 +40,14 @@
         </div>
 
         <nav class="nav flex-column sidebar-nav">
-          <a class="nav-link active" href="#">Dasbor</a>
-          <a class="nav-link" href="#">
+          <router-link to="/dashboard" class="nav-link">Dasbor</router-link>
+          <router-link to="/user" class="nav-link">
             Tiket <span class="badge bg-secondary ms-2">34</span>
-          </a>
-          <a class="nav-link" href="#">Pelanggan</a>
-          <a class="nav-link" href="#">Basis Pengetahuan</a>
-          <a class="nav-link" href="#">Laporan</a>
-          <a class="nav-link" href="#">Pengaturan</a>
+          </router-link>
+          <a class="nav-link" href="#/pelanggan">Pelanggan</a>
+          <router-link to="/report" class="nav-link">Report</router-link>
+          <a class="nav-link" href="#/laporan">Laporan</a>
+          <a class="nav-link" href="#/pengaturan">Pengaturan</a>
         </nav>
 
         <hr />
