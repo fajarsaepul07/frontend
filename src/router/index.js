@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Content from '../components/content.vue'
 import Login from '../components/Login.vue'
 import Register from '../components/Register.vue'
+import User from '../components/user.vue'
+import Report from '../components/report.vue'
 
 const routes = [
   {
@@ -26,6 +28,18 @@ const routes = [
     component: Register,
     meta: { requiresAuth: false }
   },
+  {
+    path: '/user',
+    name: 'User',
+    component: User,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/report',
+    name: 'Report',
+    component: Report,
+    meta: { requiresAuth: true }
+  }
 ]
 
 const router = createRouter({
