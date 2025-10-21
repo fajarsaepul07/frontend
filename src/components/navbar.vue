@@ -37,7 +37,7 @@
             <li><a class="dropdown-item" href="#" @click.prevent="goToProfile">Profile</a></li>
             <li><a class="dropdown-item" href="#" @click.prevent="goToSettings">Settings</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-danger" href="#" @click.prevent="logout">Sign out</a></li>
+            <li><a class="dropdown-item text-danger" href="#" @click.prevent="logout">Keluar</a></li>
           </ul>
         </div>
       </div>
