@@ -21,11 +21,8 @@
           <h6 class="mb-3 fw-semibold">Web Helpdesk</h6>
           <nav class="nav flex-column">
             <router-link to="/dashboard" class="nav-link text-white">Dasbor</router-link>
-            <router-link to="/user" class="nav-link text-white-50">Tiket</router-link>
-            <a class="nav-link text-white-50" href="#/pelanggan">Pelanggan</a>
+            <router-link to="/admin/tickets" class="nav-link text-white">Tiket</router-link>
             <router-link to="/report" class="nav-link text-white-50">Report</router-link>
-            <a class="nav-link text-white-50" href="#/laporan">Laporan</a>
-            <a class="nav-link text-white-50" href="#/pengaturan">Pengaturan</a>
           </nav>
         </div>
       </div>
@@ -41,13 +38,10 @@
 
         <nav class="nav flex-column sidebar-nav">
           <router-link to="/dashboard" class="nav-link">Dasbor</router-link>
-          <router-link to="/user" class="nav-link">
+          <router-link to="/admin/tickets" class="nav-link">
             Tiket <span class="badge bg-secondary ms-2">34</span>
           </router-link>
-          <a class="nav-link" href="#/pelanggan">Pelanggan</a>
           <router-link to="/report" class="nav-link">Report</router-link>
-          <a class="nav-link" href="#/laporan">Laporan</a>
-          <a class="nav-link" href="#/pengaturan">Pengaturan</a>
         </nav>
 
         <hr />

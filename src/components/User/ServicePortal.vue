@@ -1,39 +1,7 @@
 <template>
   <div class="app">
     <!-- Navigation -->
-    <nav>
-      <div class="logo">
-        DeLorean<br />
-        <span style="font-size: 14px; font-weight: normal">University</span>
-      </div>
-
-      <ul class="nav-links">
-        <li>
-          <a href="#" :class="{ active: currentPage === 'home' }" @click.prevent="showPage('home')">🏠 Home</a>
-        </li>
-        <li>
-          <a href="Laporan.vue" @click.prevent="showPage('dashboard')">📊 Dashboard</a>
-        </li>
-        <li>
-          <a href="#" @click.prevent="showPage('laporan')">📋 Laporan</a>
-        </li>
-        <li>
-          <a href="#" @click.prevent="showPage('solutions')">💡 Solutions</a>
-        </li>
-        <li>
-          <a href="#" @click.prevent="showPage('tiket')">👁️ Tiket</a>
-        </li>
-      </ul>
-
-      <div class="nav-right">
-        <div class="notification-badge">
-          🔔
-          <span class="badge-count">3</span>
-        </div>
-        <button class="new-request-btn" @click="showModal('newRequest')">+ NEW REQUEST</button>
-        <div class="user-avatar">JD</div>
-      </div>
-    </nav>
+    <Navbar :current-page="currentPage" @show-page="showPage" @go-to-tiket="goToTiket" />
 
     <!-- Hero Section -->
     <div class="hero">
@@ -55,7 +23,7 @@
         v-for="(service, key) in serviceList"
         :key="key"
         class="service-card"
-        @click="showModal(key)"
+        @click="handleServiceClick(key)"
       >
         <div class="service-icon" :class="service.iconClass">{{ service.icon }}</div>
         <h3>{{ service.title }}</h3>
@@ -66,8 +34,8 @@
     <!-- Modal -->
     <div class="modal" v-if="modalVisible" @click.self="closeModal">
       <div class="modal-content">
-        <h2>{{ modalData[modalType].title }}</h2>
-        <div v-html="modalData[modalType].content"></div>
+        <h2>{{ modalData[modalType]?.title || 'Information' }}</h2>
+        <div v-html="modalData[modalType]?.content || 'Coming soon...'"></div>
         <button class="close-modal" @click="closeModal">Close</button>
       </div>
     </div>
@@ -75,8 +43,13 @@
 </template>
 
 <script>
+import Navbar from './Navbar.vue';
+
 export default {
   name: "ServicePortal",
+  components: {
+    Navbar
+  },
   data() {
     return {
       search: "",
@@ -89,60 +62,101 @@ export default {
           description: "Need help with your hardware or software?",
           icon: "⚙️",
           iconClass: "icon-blue",
+          action: "tiket"
         },
         accounting: {
           title: "Accounting & Finance",
           description: "Have a request related to payment or finance?",
           icon: "💰",
           iconClass: "icon-green",
+          action: "tiket"
         },
         schedule: {
           title: "Schedule",
           description: "Check the schedule and book a classroom",
           icon: "📅",
           iconClass: "icon-blue",
+          action: "modal"
         },
         communication: {
           title: "Communication",
           description: "Have a request related to communications?",
           icon: "💬",
           iconClass: "icon-teal",
+          action: "tiket"
         },
         facilities: {
           title: "Campus Facilities",
           description: "Have a request related to campus facilities?",
           icon: "🏢",
           iconClass: "icon-orange",
+          action: "tiket"
         },
         hr: {
           title: "Human Resources",
           description: "Open a ticket with Human Resources",
           icon: "👥",
           iconClass: "icon-purple",
+          action: "tiket"
         },
         training: {
           title: "Training",
           description: "Schedule a training session",
           icon: "🎓",
           iconClass: "icon-blue",
+          action: "modal"
         },
         suggestions: {
           title: "Suggestions",
           description: "Do you have a suggestion?",
           icon: "💡",
           iconClass: "icon-red",
+          action: "tiket"
         },
       },
-      modalData: {}, // Akan diisi saat mounted()
-    };
-  },
-  mounted() {
-    // isi data modal dari sumber HTML aslinya
-    this.modalData = {
-      ...require("./modalData").default,
+      modalData: {
+        home: {
+          title: "Welcome Home",
+          content: "<p>This is your service portal home page.</p>"
+        },
+        dashboard: {
+          title: "Dashboard",
+          content: "<p>View your statistics and reports here.</p>"
+        },
+        laporan: {
+          title: "Laporan",
+          content: "<p>Access your reports and documents.</p>"
+        },
+        solutions: {
+          title: "Solutions",
+          content: "<p>Browse our knowledge base and solutions.</p>"
+        },
+        schedule: {
+          title: "Schedule Information",
+          content: "<p>Check available schedules and book resources.</p>"
+        },
+        training: {
+          title: "Training Sessions",
+          content: "<p>View and schedule training sessions.</p>"
+        }
+      },
     };
   },
   methods: {
+    handleServiceClick(key) {
+      const service = this.serviceList[key];
+      
+      // Jika action adalah tiket, arahkan ke halaman tiket
+      if (service.action === 'tiket') {
+        this.goToTiket();
+      } else {
+        // Jika action adalah modal, tampilkan modal
+        this.showModal(key);
+      }
+    },
+    goToTiket() {
+      this.$router.push('/tiket');
+    },
     showModal(type) {
       this.modalType = type;
       this.modalVisible = true;
@@ -159,115 +173,6 @@ export default {
 </script>
 
 <style scoped>
-/* Paste all your CSS here (sama seperti versi HTML) */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body,
-.app {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-}
-
-/* Navigation */
-nav {
-  background: rgba(255, 255, 255, 0.95);
-  padding: 15px 50px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.logo {
-  font-size: 24px;
-  font-weight: bold;
-  color: #667eea;
-}
-
-.nav-links {
-  display: flex;
-  gap: 30px;
-  align-items: center;
-  list-style: none;
-}
-
-.nav-links a {
-  text-decoration: none;
-  color: #333;
-  font-weight: 500;
-  transition: color 0.3s;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.nav-links a:hover {
-  color: #667eea;
-}
-
-.nav-links .active {
-  color: #667eea;
-}
-
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.notification-badge {
-  position: relative;
-  cursor: pointer;
-}
-
-.badge-count {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: #ff4444;
-  color: white;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-}
-
-.new-request-btn {
-  background: #ff6b6b;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s;
-}
-
-.new-request-btn:hover {
-  background: #ff5252;
-}
-
-.user-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #667eea;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-}
-
 /* Hero Section */
 .hero {
   text-align: center;
@@ -428,15 +333,6 @@ nav {
 }
 
 @media (max-width: 768px) {
-  nav {
-    padding: 15px 20px;
-  }
-
-  .nav-links {
-    gap: 15px;
-    font-size: 14px;
-  }
-
   .hero h1 {
     font-size: 32px;
   }
@@ -444,5 +340,12 @@ nav {
   .services-container {
     grid-template-columns: 1fr;
   }
+}
+
+body,
+.app {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
 }
 </style>

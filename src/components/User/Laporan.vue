@@ -1,146 +1,149 @@
 <template>
-  <div class="container-fluid mt-4">
-    <!-- Header -->
-    <div class="row mb-4">
-      <div class="col-md-8">
-        <h1 class="display-6">Dashboard Helpdesk</h1>
-        <p class="text-muted">Kelola laporan dan tiket Anda dengan mudah</p>
+  <div class="helpdesk-wrapper">
+    <!-- Main Content -->
+    <div class="flex-grow-1 p-4" style="background-color: #f8f9fa;">
+      <!-- Dashboard Header -->
+      <div class="row mb-4">
+        <div class="col-md-8">
+          <h1 class="display-6">Dashboard Helpdesk</h1>
+          <p class="text-muted">Kelola laporan dan tiket Anda dengan mudah</p>
+        </div>
+        <div class="col-md-4 text-end">
+          <button class="btn btn-primary btn-lg" @click="showCreateTicket = true">
+            + Buat Laporan Baru
+          </button>
+        </div>
       </div>
-      <div class="col-md-4 text-end">
-        <button class="btn btn-primary btn-lg" @click="showCreateTicket = true">
-          + Buat Laporan Baru
-        </button>
-      </div>
-    </div>
 
-    <!-- Stats Row -->
-    <div class="row mb-4">
-      <div class="col-md-3">
-        <div class="card bg-light">
-          <div class="card-body">
-            <h6 class="card-title text-muted">Total Tiket</h6>
-            <h3 class="mb-0">{{ tickets.length }}</h3>
+      <!-- Stats Row -->
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="card">
+            <div class="card-body">
+              <h6 class="card-title text-muted">Total Tiket</h6>
+              <h3 class="mb-0">{{ tickets.length }}</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card">
+            <div class="card-body">
+              <h6 class="card-title text-muted">Sedang Diproses</h6>
+              <h3 class="mb-0 text-warning">{{ countByStatus('Dalam Proses') }}</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card">
+            <div class="card-body">
+              <h6 class="card-title text-muted">Selesai</h6>
+              <h3 class="mb-0 text-success">{{ countByStatus('Selesai') }}</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card">
+            <div class="card-body">
+              <h6 class="card-title text-muted">Kritis/Tinggi</h6>
+              <h3 class="mb-0 text-danger">{{ countByPriority(['Kritis', 'Tinggi']) }}</h3>
+            </div>
           </div>
         </div>
       </div>
-      <div class="col-md-3">
-        <div class="card bg-light">
-          <div class="card-body">
-            <h6 class="card-title text-muted">Sedang Diproses</h6>
-            <h3 class="mb-0 text-warning">{{ countByStatus('Dalam Proses') }}</h3>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card bg-light">
-          <div class="card-body">
-            <h6 class="card-title text-muted">Selesai</h6>
-            <h3 class="mb-0 text-success">{{ countByStatus('Selesai') }}</h3>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card bg-light">
-          <div class="card-body">
-            <h6 class="card-title text-muted">Kritis/Tinggi</h6>
-            <h3 class="mb-0 text-danger">{{ countByPriority(['Kritis', 'Tinggi']) }}</h3>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Filter & Search -->
-    <div class="row mb-3">
-      <div class="col-md-4">
-        <input 
-          type="text" 
-          class="form-control" 
-          placeholder="Cari tiket..."
-          v-model="searchQuery"
-        />
+      <!-- Filter & Search -->
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <input 
+            type="text" 
+            class="form-control" 
+            placeholder="Cari tiket..."
+            v-model="searchQuery"
+          />
+        </div>
+        <div class="col-md-2">
+          <select class="form-select" v-model="filterStatus">
+            <option value="">Semua Status</option>
+            <option value="Baru">Baru</option>
+            <option value="Dalam Proses">Dalam Proses</option>
+            <option value="Menunggu Respon">Menunggu Respon</option>
+            <option value="Selesai">Selesai</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <select class="form-select" v-model="filterPriority">
+            <option value="">Semua Prioritas</option>
+            <option value="Kritis">Kritis</option>
+            <option value="Tinggi">Tinggi</option>
+            <option value="Sedang">Sedang</option>
+            <option value="Rendah">Rendah</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <select class="form-select" v-model="sortBy">
+            <option value="terbaru">Terbaru</option>
+            <option value="prioritas">Prioritas Tertinggi</option>
+            <option value="status">Status</option>
+          </select>
+        </div>
       </div>
-      <div class="col-md-2">
-        <select class="form-select" v-model="filterStatus">
-          <option value="">Semua Status</option>
-          <option value="Baru">Baru</option>
-          <option value="Dalam Proses">Dalam Proses</option>
-          <option value="Menunggu Respon">Menunggu Respon</option>
-          <option value="Selesai">Selesai</option>
-        </select>
-      </div>
-      <div class="col-md-2">
-        <select class="form-select" v-model="filterPriority">
-          <option value="">Semua Prioritas</option>
-          <option value="Kritis">Kritis</option>
-          <option value="Tinggi">Tinggi</option>
-          <option value="Sedang">Sedang</option>
-          <option value="Rendah">Rendah</option>
-        </select>
-      </div>
-      <div class="col-md-2">
-        <select class="form-select" v-model="sortBy">
-          <option value="terbaru">Terbaru</option>
-          <option value="prioritas">Prioritas Tertinggi</option>
-          <option value="status">Status</option>
-        </select>
-      </div>
-    </div>
 
-    <!-- Tickets Table -->
-    <div class="card">
-      <div class="table-responsive">
-        <table class="table table-hover mb-0">
-          <thead class="table-light">
-            <tr>
-              <th>ID Tiket</th>
-              <th>Judul Laporan</th>
-              <th>Kategori</th>
-              <th>Status</th>
-              <th>Prioritas</th>
-              <th>Dibuat</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="ticket in filteredTickets" :key="ticket.id">
-              <td><strong>#{{ ticket.id }}</strong></td>
-              <td>{{ ticket.title }}</td>
-              <td>
-                <span class="badge bg-secondary">{{ ticket.category }}</span>
-              </td>
-              <td>
-                <span 
-                  class="badge"
-                  :class="getStatusClass(ticket.status)"
-                >
-                  {{ ticket.status }}
-                </span>
-              </td>
-              <td>
-                <span 
-                  class="badge"
-                  :class="getPriorityClass(ticket.priority)"
-                >
-                  {{ ticket.priority }}
-                </span>
-              </td>
-              <td>{{ formatDate(ticket.created) }}</td>
-              <td>
-                <button 
-                  class="btn btn-sm btn-outline-primary"
-                  @click="openTicket(ticket)"
-                >
-                  Lihat
-                </button>
-              </td>
-            </tr>
-            <tr v-if="filteredTickets.length === 0">
-              <td colspan="7" class="text-center py-4 text-muted">
-                Tidak ada tiket yang sesuai dengan filter
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- Tickets Table -->
+      <div class="card">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>ID Tiket</th>
+                <th>Judul Laporan</th>
+                <th>Kategori</th>
+                <th>Status</th>
+                <th>Prioritas</th>
+                <th>Dibuat</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="ticket in filteredTickets" :key="ticket.id">
+                <td><strong>#{{ ticket.id }}</strong></td>
+                <td>{{ ticket.title }}</td>
+                <td>
+                  <span class="badge bg-secondary">{{ ticket.category }}</span>
+                </td>
+                <td>
+                  <span 
+                    class="badge"
+                    :class="getStatusClass(ticket.status)"
+                  >
+                    {{ ticket.status }}
+                  </span>
+                </td>
+                <td>
+                  <span 
+                    class="badge"
+                    :class="getPriorityClass(ticket.priority)"
+                  >
+                    {{ ticket.priority }}
+                  </span>
+                </td>
+                <td>{{ formatDate(ticket.created) }}</td>
+                <td>
+                  <button 
+                    class="btn btn-sm btn-outline-primary"
+                    @click="openTicket(ticket)"
+                  >
+                    Lihat
+                  </button>
+                </td>
+              </tr>
+              <tr v-if="filteredTickets.length === 0">
+                <td colspan="7" class="text-center py-4 text-muted">
+                  Tidak ada tiket yang sesuai dengan filter
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -294,9 +297,10 @@
 
 <script>
 export default {
-  name: 'User',
+  name: 'Laporan',
   data() {
     return {
+      currentView: 'tiket',
       tickets: [
         {
           id: 'TK001',
@@ -383,7 +387,6 @@ export default {
         return matchSearch && matchStatus && matchPriority;
       });
 
-      // Sort
       if (this.sortBy === 'terbaru') {
         filtered.sort((a, b) => new Date(b.created) - new Date(a.created));
       } else if (this.sortBy === 'prioritas') {
@@ -477,6 +480,11 @@ export default {
 </script>
 
 <style scoped>
+.helpdesk-wrapper {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
 .modal.show {
   display: block !important;
 }
