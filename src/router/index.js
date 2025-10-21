@@ -1,9 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Content from '../components/content.vue'
-import Login from '../components/Login.vue'
-import Register from '../components/Register.vue'
-import User from '../components/user.vue'
-import Report from '../components/report.vue'
+
+// ===== Admin Components =====
+import Content from '../components/Admin/content.vue'
+import Report from '../components/Admin/report.vue'
+
+// ===== Auth Components =====
+import Login from '../components/Auth/Login.vue'
+import Register from '../components/Auth/Register.vue'
+import LoginSuccess from '../components/Auth/LoginSuccess.vue'
+
+// ===== User Components =====
+import User from '../components/User/ServicePortal.vue'
 
 const routes = [
   {
@@ -32,7 +39,7 @@ const routes = [
     path: '/user',
     name: 'User',
     component: User,
-    meta: { requiresAuth: true, layout: 'auth' } // ⬅️ ubah ke 'auth' biar tanpa navbar/sidebar
+    meta: { requiresAuth: true, layout: 'auth' }
   },
   {
     path: '/report',
@@ -43,7 +50,7 @@ const routes = [
   {
     path: '/login-success',
     name: 'LoginSuccess',
-    component: () => import('../components/LoginSuccess.vue'),
+    component: LoginSuccess,
     meta: { requiresAuth: false, layout: 'auth' }
   }
 ]
@@ -53,20 +60,17 @@ const router = createRouter({
   routes,
 })
 
-// ✅ Middleware untuk proteksi halaman login/register
+// Middleware: proteksi halaman
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = !!localStorage.getItem('token');
+  const isAuthenticated = !!localStorage.getItem('token')
 
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next('/login');
-  } else if (
-    (to.path === '/login' || to.path === '/register') &&
-    isAuthenticated
-  ) {
-    next('/dashboard');
+    next('/login')
+  } else if ((to.path === '/login' || to.path === '/register') && isAuthenticated) {
+    next('/dashboard')
   } else {
-    next();
+    next()
   }
-});
+})
 
 export default router

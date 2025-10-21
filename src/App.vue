@@ -19,8 +19,8 @@
 </template>
 
 <script>
-import Navbar from './components/navbar.vue'
-import Sidebar from './components/sidebar.vue'
+import Navbar from './components/Admin/navbar.vue'
+import Sidebar from './components/Admin/sidebar.vue'
 
 export default {
   name: 'App',
