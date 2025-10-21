@@ -14,31 +14,37 @@ const routes = [
     path: '/dashboard',
     name: 'Dashboard',
     component: Content,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, layout: 'default' }
   },
   {
     path: '/login',
     name: 'Login',
     component: Login,
-    meta: { requiresAuth: false }
+    meta: { requiresAuth: false, layout: 'auth' }
   },
   {
     path: '/register',
     name: 'Register',
     component: Register,
-    meta: { requiresAuth: false }
+    meta: { requiresAuth: false, layout: 'auth' }
   },
   {
     path: '/user',
     name: 'User',
     component: User,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, layout: 'auth' } // ⬅️ ubah ke 'auth' biar tanpa navbar/sidebar
   },
   {
     path: '/report',
     name: 'Report',
     component: Report,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, layout: 'default' }
+  },
+  {
+    path: '/login-success',
+    name: 'LoginSuccess',
+    component: () => import('../components/LoginSuccess.vue'),
+    meta: { requiresAuth: false, layout: 'auth' }
   }
 ]
 
@@ -47,11 +53,16 @@ const router = createRouter({
   routes,
 })
 
+// ✅ Middleware untuk proteksi halaman login/register
 router.beforeEach((to, from, next) => {
   const isAuthenticated = !!localStorage.getItem('token');
+
   if (to.meta.requiresAuth && !isAuthenticated) {
     next('/login');
-  } else if ((to.path === '/login' || to.path === '/register') && isAuthenticated) {
+  } else if (
+    (to.path === '/login' || to.path === '/register') &&
+    isAuthenticated
+  ) {
     next('/dashboard');
   } else {
     next();

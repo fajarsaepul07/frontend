@@ -1,9 +1,9 @@
 <template>
   <div>
-    <!-- Jika route adalah login atau register, render langsung tanpa struktur dashboard -->
-    <router-view v-if="isAuthRoute" />
+    <!-- Jika layout-nya 'auth', tampil tanpa navbar/sidebar -->
+    <router-view v-if="isAuthLayout" />
 
-    <!-- Jika bukan, render dengan navbar dan sidebar -->
+    <!-- Jika layout-nya 'default', tampil dengan navbar & sidebar -->
     <div v-else>
       <Navbar />
       <div class="d-flex">
@@ -19,22 +19,23 @@
 </template>
 
 <script>
-import Navbar from './components/navbar.vue';
-import Sidebar from './components/sidebar.vue';
+import Navbar from './components/navbar.vue'
+import Sidebar from './components/sidebar.vue'
 
 export default {
   name: 'App',
   components: { Navbar, Sidebar },
   computed: {
-    isAuthRoute() {
-      return ['/login', '/register'].includes(this.$route.path);
+    isAuthLayout() {
+      // jika route pakai meta.layout = 'auth'
+      return this.$route.meta.layout === 'auth'
     }
   }
-};
+}
 </script>
 
 <style scoped>
 .app-main {
-  padding-top: 60px; /* Tetap untuk dashboard */
+  padding-top: 60px;
 }
 </style>

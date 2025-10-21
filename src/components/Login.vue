@@ -102,33 +102,34 @@ export default {
   },
   methods: {
     async login() {
-      try {
-        const response = await axios.post('/login', this.loginForm)
+  try {
+    const response = await axios.post('/login', this.loginForm)
 
-        const user = response.data.user
-        const token = response.data.token
+    const user = response.data.user
+    const token = response.data.token
 
-        // simpan data ke localStorage
-        localStorage.setItem('token', token)
-        localStorage.setItem('user', JSON.stringify(user))
+    // simpan data ke localStorage
+    localStorage.setItem('token', token)
+    localStorage.setItem('user', JSON.stringify(user))
 
-        // cek role dan arahkan ke halaman yang sesuai
-        if (user.role === 'admin') {
-          this.$router.push('/dashboard')
-        } else if (user.role === 'customer') {
-          this.$router.push('/home')
-        } else {
-          this.$router.push('/')
-        }
-
-      } catch (error) {
-        if (error.response && error.response.data.errors) {
-          this.loginErrors = error.response.data.errors
-        } else {
-          alert(error.response?.data?.message || 'Login gagal')
-        }
-      }
+    // cek role dan arahkan ke halaman yang sesuai
+    if (user.role === 'admin') {
+      this.$router.push('/dashboard')
+    } else if (user.role === 'customer' || user.role === 'user') {
+      this.$router.push('/user')
+    } else {
+      this.$router.push('/')
     }
+
+  } catch (error) {
+    if (error.response && error.response.data.errors) {
+      this.loginErrors = error.response.data.errors
+    } else {
+      alert(error.response?.data?.message || 'Login gagal')
+    }
+  }
+}
+
   }
 }
 </script>
