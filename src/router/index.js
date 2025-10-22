@@ -1,5 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+// Import komponen
+import TicketIndex from '../components/Admin/tiket/index.vue'
+import TicketCreate from '../components/Admin/tiket/create.vue'
+import TicketUpdate from '../components/Admin/tiket/update.vue'
+
+
 // ===== Admin Components =====
 import Content from '../components/Admin/content.vue'
 import Report from '../components/Admin/report.vue'
@@ -51,10 +57,10 @@ const routes = [
     meta: { requiresAuth: true, layout: 'default' }
   },
   {
-    path: '/tiket',
-    name: 'Tiket',
+    path: '/usertiket',
+    name: 'UserTiket',
     component: Tiket,
-    meta: { requiresAuth: true, layout: 'auth' } // User Tiket
+    meta: { requiresAuth: true, layout: 'auth' } 
   },
   {
     path: '/laporan',
@@ -73,7 +79,25 @@ const routes = [
     name: 'AdminTickets',
     component: AdminTiket,
     meta: { requiresAuth: true, layout: 'default' }
-  }
+  },
+  {
+    path: '/tiket',
+    name: 'Tiket',
+    component: TicketIndex,
+    meta: { requiresAuth: true, layout: 'auth' }
+  },
+  {
+    path: '/tiket/create',
+    name: 'TiketCreate',
+    component: TicketCreate,
+    meta: { requiresAuth: true, layout: 'auth' }
+  },
+  {
+    path: '/tiket/update/:id',
+    name: 'TiketUpdate',
+    component: TicketUpdate,
+    meta: { requiresAuth: true, layout: 'auth' }
+  },
 ]
 
 const router = createRouter({

@@ -10,10 +10,10 @@
               <i class="bi bi-ticket-detailed me-2"></i>
               Manajemen Tiket Admin
             </h5>
-            <button class="btn btn-light" @click="showModal = true">
-              <i class="bi bi-plus-circle me-1"></i>
-              Buat Tiket Baru
-            </button>
+            <router-link to="/tiket/create" class="btn btn-light">
+  <i class="bi bi-plus-circle me-1"></i>
+  Buat Tiket Baru
+</router-link>
           </div>
 
           <div class="card-body">
