@@ -1,4 +1,3 @@
-
 <template>
   <nav>
     <div class="logo">
@@ -29,22 +28,66 @@
         🔔
         <span class="badge-count">3</span>
       </div>
-      <button class="new-request-btn" @click="$emit('')">+ NEW REQUEST</button>
-      <div class="user-avatar">JD</div>
+      <button class="new-request-btn" @click="$emit('new-request')">+ NEW REQUEST</button>
+
+      <!-- Avatar + Dropdown -->
+      <div class="user-avatar" @click="toggleDropdown">
+        JD
+        <div v-if="showDropdown" class="dropdown-menu">
+          <p class="username">{{ user?.name || 'User' }}</p>
+          <button @click="logout" class="logout-btn">Logout</button>
+        </div>
+      </div>
     </div>
   </nav>
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: "Navbar",
   props: ['currentPage'],
+  data() {
+    return {
+      showDropdown: false,
+      user: null
+    }
+  },
+  mounted() {
+    this.fetchUser()
+  },
   methods: {
-    goToTiket() {
-      this.$emit('go-to-tiket');
+    toggleDropdown() {
+      this.showDropdown = !this.showDropdown
+    },
+    async fetchUser() {
+      try {
+        const token = localStorage.getItem('token')
+        if (token) {
+          const res = await axios.get('http://localhost:8000/api/cek-user', {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+          this.user = res.data
+        }
+      } catch (e) {
+        console.error('Gagal mengambil data user:', e)
+      }
+    },
+    async logout() {
+      try {
+        const token = localStorage.getItem('token')
+        await axios.post('http://localhost:8000/api/logout', {}, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+      } catch (e) {
+        console.warn('Gagal logout dari server, lanjut hapus token lokal')
+      }
+      localStorage.removeItem('token')
+      this.$router.push('/login')
     }
   }
-};
+}
 </script>
 
 <style scoped>
@@ -133,7 +176,9 @@ nav {
   background: #ff5252;
 }
 
+/* Avatar + Dropdown */
 .user-avatar {
+  position: relative;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -144,6 +189,43 @@ nav {
   color: white;
   font-weight: bold;
   cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  padding: 10px;
+  width: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  z-index: 10;
+}
+
+.dropdown-menu .username {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.logout-btn {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: background 0.3s;
+}
+
+.logout-btn:hover {
+  background: #ff5252;
 }
 
 @media (max-width: 768px) {
