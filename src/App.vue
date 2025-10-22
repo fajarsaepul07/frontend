@@ -1,9 +1,14 @@
 <template>
   <div>
-    <!-- Jika layout-nya 'auth', tampil tanpa navbar/sidebar -->
-    <router-view v-if="isAuthLayout" />
+    <!-- Loading screen ketika verifikasi auth -->
+    <div v-if="$authState.isChecking" class="loading-screen">
+      <p>Memeriksa sesi...</p>
+    </div>
 
-    <!-- Jika layout-nya 'default', tampil dengan navbar & sidebar -->
+    <!-- Layout Auth (Login / Register) -->
+    <router-view v-else-if="isAuthLayout" />
+
+    <!-- Layout Default (dengan Navbar & Sidebar) -->
     <div v-else>
       <Navbar />
       <div class="d-flex">
@@ -27,7 +32,7 @@ export default {
   components: { Navbar, Sidebar },
   computed: {
     isAuthLayout() {
-      // jika route pakai meta.layout = 'auth'
+      // Jika route pakai meta.layout = 'auth'
       return this.$route.meta.layout === 'auth'
     }
   }
@@ -37,5 +42,15 @@ export default {
 <style scoped>
 .app-main {
   padding-top: 60px;
+}
+.loading-screen {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f9fafc;
+  font-size: 18px;
+  font-weight: bold;
+  color: #4f46e5;
 }
 </style>

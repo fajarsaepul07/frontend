@@ -39,7 +39,7 @@
         <nav class="nav flex-column sidebar-nav">
           <router-link to="/dashboard" class="nav-link">Dasbor</router-link>
           <router-link to="/admin/tickets" class="nav-link">
-            Tiket <span class="badge bg-secondary ms-2">34</span>
+            Tiket <span class="badge bg-secondary ms-2">0</span>
           </router-link>
           <router-link to="/report" class="nav-link">Report</router-link>
         </nav>
