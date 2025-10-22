@@ -1,6 +1,8 @@
 <template>
   <div class="container">
     <h2>Create New Ticket</h2>
+    <div v-if="loading" class="text-info mb-3">Loading data...</div>
+    <div v-if="error" class="text-danger mb-3">{{ error }}</div>
     <form @submit.prevent="submitForm">
       <div class="form-group">
         <label for="user_id">User ID</label>
@@ -62,38 +64,52 @@ export default {
       events: [],
       statuses: [],
       kategoris: [],
-      priorities: []
+      priorities: [],
+      loading: true,
+      error: ''
     };
   },
-  created() {
-    this.fetchEvents();
-    this.fetchStatuses();
-    this.fetchKategoris();
-    this.fetchPriorities();
+  async created() {
+    try {
+      this.loading = true;
+      await Promise.all([
+        this.fetchEvents(),
+        this.fetchStatuses(),
+        this.fetchKategoris(),
+        this.fetchPriorities()
+      ]);
+    } catch (error) {
+      this.error = 'Failed to load data. Please try again.';
+      console.error('Load data error:', error);
+    } finally {
+      this.loading = false;
+    }
   },
   methods: {
     async fetchEvents() {
-      const response = await axios.get('/api/events');
+      const response = await axios.get('/tiket-statuses'); // Sesuaikan endpoint sesuai backend
       this.events = response.data.data;
     },
     async fetchStatuses() {
-      const response = await axios.get('/api/tiket-statuses');
+      const response = await axios.get('/tiket-statuses'); // Endpoint untuk status tiket
       this.statuses = response.data.data;
+      console.log('Loaded statuses:', this.statuses); // Debug untuk cek data status
     },
     async fetchKategoris() {
-      const response = await axios.get('/api/kategoris');
+      const response = await axios.get('/kategoris');
       this.kategoris = response.data.data;
     },
     async fetchPriorities() {
-      const response = await axios.get('/api/priorities');
+      const response = await axios.get('/prioritas');
       this.priorities = response.data.data;
     },
     async submitForm() {
       try {
-        await axios.post('/api/tickets', this.form);
+        await axios.post('/tikets', this.form); // Sesuaikan endpoint tiket dari api.php
         this.$router.push('/tiket');
       } catch (error) {
-        console.error(error.response.data);
+        console.error('Submit error:', error.response.data);
+        this.error = 'Failed to create ticket.';
       }
     }
   }

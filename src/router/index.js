@@ -9,6 +9,11 @@ import TicketIndex from '../components/Admin/tiket/index.vue'
 import TicketCreate from '../components/Admin/tiket/create.vue'
 import TicketUpdate from '../components/Admin/tiket/update.vue'
 
+// ===== Status Components =====
+import StatusIndex from '../components/Admin/status/index.vue'
+import StatusCreate from '../components/Admin/status/create.vue'
+import StatusUpdate from '../components/Admin/status/update.vue'
+
 // ===== Auth Components =====
 import Login from '../components/Auth/Login.vue'
 import Register from '../components/Auth/Register.vue'
@@ -33,6 +38,11 @@ const routes = [
   { path: '/tiket', name: 'TiketIndex', component: TicketIndex, meta: { requiresAuth: true, layout: 'default' } },
   { path: '/tiket/create', name: 'TiketCreate', component: TicketCreate, meta: { requiresAuth: true, layout: 'default' } },
   { path: '/tiket/update/:id', name: 'TiketUpdate', component: TicketUpdate, meta: { requiresAuth: true, layout: 'default' } },
+
+  // CRUD Status Admin
+  { path: '/status', name: 'StatusIndex', component: StatusIndex, meta: { requiresAuth: true, layout: 'default' } },
+  { path: '/status/create', name: 'StatusCreate', component: StatusCreate, meta: { requiresAuth: true, layout: 'default' } },
+  { path: '/status/update/:id', name: 'StatusUpdate', component: StatusUpdate, meta: { requiresAuth: true, layout: 'default' } },
 
   // ===== User Routes =====
   { path: '/user', name: 'User', component: User, meta: { requiresAuth: true, layout: 'auth' } },
@@ -90,7 +100,8 @@ router.beforeEach(async (to, from, next) => {
         to.path.startsWith('/dashboard') ||
         to.path.startsWith('/report') ||
         to.path.startsWith('/admin') ||
-        to.path.startsWith('/tiket')
+        to.path.startsWith('/tiket') ||
+        to.path.startsWith('/status')
 
       // Customer tidak boleh ke admin route
       if (user.role === 'customer' && isAdminRoute) {
