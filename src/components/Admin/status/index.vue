@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <h2>Ticket Status List</h2>
-    <router-link to="/status/create" class="btn btn-primary mb-3">Create New Status</router-link>
+    <router-link to="/Admin/status/create" class="btn btn-primary mb-3">Create New Status</router-link>
     <table class="table" v-if="statuses.length > 0">
       <thead>
         <tr>
@@ -16,7 +16,7 @@
           <td>{{ status.nama_status }}</td>
           <td>
             <!-- GANTI status.id MENJADI status.status_id -->
-            <router-link :to="`/status/update/${status.status_id}`" class="btn btn-warning btn-sm">Edit</router-link>
+            <router-link :to="`/admin/status/update/${status.status_id}`" class="btn btn-warning btn-sm">Edit</router-link>
             <button @click="deleteStatus(status.status_id)" class="btn btn-danger btn-sm ml-2">Delete</button>
           </td>
         </tr>

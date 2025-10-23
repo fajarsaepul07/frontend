@@ -131,9 +131,9 @@ const routes = [
     component: StatusCreate
   },
   {
-    path: '/admin/status/update/:id',
-    name: 'StatusUpdate',
-    component: StatusUpdate
+  path: '/admin/status/update/:id',
+  name: 'StatusUpdate',
+  component: StatusUpdate
   },
 ]
 

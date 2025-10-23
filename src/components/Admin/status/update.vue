@@ -1,7 +1,9 @@
 <template>
   <div class="container">
     <h2>Update Ticket Status</h2>
+
     <div v-if="error && !loading" class="text-danger mb-3">{{ error }}</div>
+
     <form @submit.prevent="submitForm" v-else-if="!loading">
       <div class="form-group">
         <label for="nama_status">Status Name</label>
@@ -9,6 +11,7 @@
       </div>
       <button type="submit" class="btn btn-primary" :disabled="!form.nama_status.trim()">Update</button>
     </form>
+
     <div v-if="loading" class="text-info">Loading...</div>
   </div>
 </template>
@@ -34,11 +37,13 @@ export default {
     async fetchStatus() {
       this.loading = true;
       const id = this.$route.params.id;
+
       if (!id || id === 'undefined' || isNaN(parseInt(id))) {
         this.error = 'Invalid or missing status ID. Please select a valid status to edit.';
         this.loading = false;
         return;
       }
+
       try {
         const response = await axios.get(`/tiket-statuses/${id}`);
         this.form.nama_status = response.data.data.nama_status;
@@ -49,27 +54,32 @@ export default {
         this.loading = false;
       }
     },
+
     async submitForm() {
       this.error = '';
       this.loading = true;
       this.form.nama_status = this.form.nama_status.trim();
+
       if (!this.form.nama_status) {
         this.error = 'Status name is required';
         this.loading = false;
         return;
       }
+
       const id = this.$route.params.id;
       if (!id || id === 'undefined' || isNaN(parseInt(id))) {
         this.error = 'Invalid or missing status ID.';
         this.loading = false;
         return;
       }
+
       try {
         const response = await axios.put(`/tiket-statuses/${id}`, this.form, {
           headers: { 'Content-Type': 'application/json' }
         });
         console.log('Success:', response.data);
-        this.$router.push('/status');
+        // ✅ Perbaikan utama di sini
+        this.$router.push('/admin/status');
       } catch (error) {
         this.error = error.response?.data?.message || 'Failed to update status';
         console.error('Update error:', error.response ? error.response.data : error.message);

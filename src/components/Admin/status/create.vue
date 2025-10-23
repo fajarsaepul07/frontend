@@ -38,7 +38,7 @@ export default {
           headers: { 'Content-Type': 'application/json' }
         });
         console.log('Success:', response.data);
-        this.$router.push('/status');
+        this.$router.push('/admin/status');
       } catch (error) {
         console.error('Error:', error.response ? error.response.data : error.message);
         this.error = error.response?.data?.message || 'Failed to create status';
