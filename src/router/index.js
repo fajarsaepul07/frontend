@@ -8,7 +8,7 @@ import TicketUpdate from '../components/Admin/tiket/update.vue'
 // ===== Admin Components =====
 import Content from '../components/Admin/content.vue'
 import Report from '../components/Admin/report.vue'
-import AdminTiket from '../components/Admin/tiket.vue'
+import AdminTiket from '../components/Admin/tiket/tiket.vue'
 
 // ===== Auth Components =====
 import Login from '../components/Auth/Login.vue'
@@ -22,6 +22,11 @@ import Laporan from '../components/User/Laporan.vue'
 import KategoriIndex from '../components/Admin/kategori/index.vue'
 import KategoriCreate from '../components/Admin/kategori/create.vue'
 import KategoriUpdate from '../components/Admin/kategori/update.vue'
+
+import StatusIndex from '../components/Admin/status/index.vue'
+import StatusCreate from '../components/Admin/status/create.vue'
+import StatusUpdate from '../components/Admin/status/update.vue'
+
 
 const routes = [
   {
@@ -103,21 +108,33 @@ const routes = [
   {
     path: '/admin/kategori',
     name: 'KategoriIndex',
-    component: KategoriIndex,
-    meta: { requiresAuth: true, adminOnly: true }
+    component: KategoriIndex
   },
   {
     path: '/admin/kategori/create',
     name: 'KategoriCreate',
-    component: KategoriCreate,
-    meta: { requiresAuth: true, adminOnly: true }
+    component: KategoriCreate
   },
   {
     path: '/admin/kategori/update/:id',
     name: 'KategoriUpdate',
-    component: KategoriUpdate,
-    meta: { requiresAuth: true, adminOnly: true }
-  }
+    component: KategoriUpdate
+  },
+  {
+    path: '/admin/status',
+    name: 'StatusIndex',
+    component: StatusIndex
+  },
+  {
+    path: '/admin/status/create',
+    name: 'StatusCreate',
+    component: StatusCreate
+  },
+  {
+    path: '/admin/status/update/:id',
+    name: 'StatusUpdate',
+    component: StatusUpdate
+  },
 ]
 
 const router = createRouter({
