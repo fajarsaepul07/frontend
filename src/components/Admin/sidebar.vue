@@ -42,6 +42,7 @@
             Tiket <span class="badge bg-secondary ms-2">0</span>
           </router-link>
           <router-link to="/report" class="nav-link">Report</router-link>
+          <router-link to="/admin/kategori" class="nav-link">Kategori</router-link>
         </nav>
 
         <hr />

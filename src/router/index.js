@@ -19,6 +19,10 @@ import User from '../components/User/ServicePortal.vue'
 import Tiket from '../components/User/Tiket.vue'
 import Laporan from '../components/User/Laporan.vue'
 
+import KategoriIndex from '../components/Admin/kategori/index.vue'
+import KategoriCreate from '../components/Admin/kategori/create.vue'
+import KategoriUpdate from '../components/Admin/kategori/update.vue'
+
 const routes = [
   {
     path: '/',
@@ -96,6 +100,24 @@ const routes = [
     component: LoginSuccess, // Komponen baru untuk menangani login Google
     meta: { requiresAuth: false, layout: 'auth' }
   },
+  {
+    path: '/admin/kategori',
+    name: 'KategoriIndex',
+    component: KategoriIndex,
+    meta: { requiresAuth: true, adminOnly: true }
+  },
+  {
+    path: '/admin/kategori/create',
+    name: 'KategoriCreate',
+    component: KategoriCreate,
+    meta: { requiresAuth: true, adminOnly: true }
+  },
+  {
+    path: '/admin/kategori/update/:id',
+    name: 'KategoriUpdate',
+    component: KategoriUpdate,
+    meta: { requiresAuth: true, adminOnly: true }
+  }
 ]
 
 const router = createRouter({
