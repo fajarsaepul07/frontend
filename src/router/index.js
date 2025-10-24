@@ -135,6 +135,21 @@ const routes = [
   name: 'StatusUpdate',
   component: StatusUpdate
   },
+  {
+  path: '/admin/prioritas',
+  name: 'PrioritasIndex',
+  component: () => import('../components/Admin/prioritas/index.vue')
+  },
+  {
+    path: '/admin/prioritas/create',
+    name: 'PrioritasCreate',
+    component: () => import('../components/Admin/prioritas/create.vue')
+  },
+  {
+    path: '/admin/prioritas/update/:id',
+    name: 'PrioritasUpdate',
+    component: () => import('../components/Admin/prioritas/update.vue')
+  },
 ]
 
 const router = createRouter({
