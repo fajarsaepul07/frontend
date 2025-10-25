@@ -9,9 +9,11 @@
         <input v-model="form.user_id" type="text" class="form-control" id="user_id" required>
       </div>
       <div class="form-group">
-        <label for="event_id">Event ID</label>
+        <label for="event_id">Event</label>
         <select v-model="form.event_id" class="form-control" id="event_id" required>
-          <option v-for="event in events" :key="event.event_id" :value="event.event_id">{{ event.nama_event }}</option>
+          <option v-for="event in events" :key="event.id" :value="event.id">
+            {{ event.nama_event }}
+          </option>
         </select>
       </div>
       <div class="form-group">
@@ -87,7 +89,7 @@ export default {
   },
   methods: {
     async fetchEvents() {
-      const response = await axios.get('/tiket-statuses'); // Sesuaikan endpoint sesuai backend
+      const response = await axios.get('/events'); // ✅ ambil data event dari backend
       this.events = response.data.data;
     },
     async fetchStatuses() {

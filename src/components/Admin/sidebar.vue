@@ -45,7 +45,7 @@
           <router-link to="/admin/kategori" class="nav-link">Kategori</router-link>
           <router-link to="/admin/status" class="nav-link">Status</router-link>
           <router-link to="/admin/prioritas" class="nav-link">Prioritas</router-link>
-
+          <router-link to="/admin/event" class="nav-link">Event</router-link>
         </nav>
 
         <hr />

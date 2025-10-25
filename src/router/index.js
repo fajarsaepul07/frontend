@@ -150,6 +150,21 @@ const routes = [
     name: 'PrioritasUpdate',
     component: () => import('../components/Admin/prioritas/update.vue')
   },
+  {
+  path: '/admin/event',
+  name: 'EventIndex',
+  component: () => import('../components/Admin/Event/index.vue')
+  },
+  {
+    path: '/admin/event/create',
+    name: 'EventCreate',
+    component: () => import('../components/Admin/Event/create.vue')
+  },
+  {
+    path: '/admin/event/update/:id',
+    name: 'EventUpdate',
+    component: () => import('../components/Admin/Event/update.vue')
+  },
 ]
 
 const router = createRouter({
