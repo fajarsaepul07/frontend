@@ -71,7 +71,7 @@ export default {
   methods: {
     async fetchTickets() {
       const params = { ...this.filters };
-      const response = await axios.get('/api/tickets', { params });
+      const response = await axios.get('/api/tikets', { params });
       this.tickets = response.data.data;
     },
     async fetchStatuses() {
@@ -89,7 +89,7 @@ export default {
     async deleteTicket(id) {
       if (confirm('Are you sure you want to delete this ticket?')) {
         try {
-          await axios.delete(`/api/tickets/${id}`);
+          await axios.delete(`/api/tikets/${id}`);
           this.fetchTickets();
         } catch (error) {
           console.error(error);

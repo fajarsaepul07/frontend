@@ -45,7 +45,7 @@
           <div class="card">
             <div class="card-body">
               <h6 class="card-title text-muted">Kritis/Tinggi</h6>
-              <h3 class="mb-0 text-danger">{{ countByPriority(['Kritis', 'Tinggi']) }}</h3>
+              <h3 class="mb-0 text-danger">{{ countByPriority(['urgent', 'tinggi']) }}</h3>
             </div>
           </div>
         </div>
@@ -73,22 +73,15 @@
         <div class="col-md-2">
           <select class="form-select" v-model="filterPriority">
             <option value="">Semua Prioritas</option>
-            <option value="Kritis">Kritis</option>
-            <option value="Tinggi">Tinggi</option>
-            <option value="Sedang">Sedang</option>
-            <option value="Rendah">Rendah</option>
-          </select>
-        </div>
-        <div class="col-md-2">
-          <select class="form-select" v-model="sortBy">
-            <option value="terbaru">Terbaru</option>
-            <option value="prioritas">Prioritas Tertinggi</option>
-            <option value="status">Status</option>
+            <option value="urgent">Kritis</option>
+            <option value="tinggi">Tinggi</option>
+            <option value="sedang">Sedang</option>
+            <option value="rendah">Rendah</option>
           </select>
         </div>
       </div>
 
-      <!-- Tickets Table -->
+      <!-- Table -->
       <div class="card">
         <div class="table-responsive">
           <table class="table table-hover mb-0">
@@ -106,303 +99,164 @@
             <tbody>
               <tr v-for="ticket in filteredTickets" :key="ticket.id">
                 <td><strong>#{{ ticket.id }}</strong></td>
-                <td>{{ ticket.title }}</td>
+                <td>{{ ticket.judul }}</td>
+                <td>{{ ticket.kategori }}</td>
+                <td><span :class="getStatusClass(ticket.status)" class="badge">{{ ticket.status }}</span></td>
+                <td><span :class="getPriorityClass(ticket.prioritas)" class="badge">{{ ticket.prioritas }}</span></td>
+                <td>{{ formatDate(ticket.created_at) }}</td>
                 <td>
-                  <span class="badge bg-secondary">{{ ticket.category }}</span>
-                </td>
-                <td>
-                  <span 
-                    class="badge"
-                    :class="getStatusClass(ticket.status)"
-                  >
-                    {{ ticket.status }}
-                  </span>
-                </td>
-                <td>
-                  <span 
-                    class="badge"
-                    :class="getPriorityClass(ticket.priority)"
-                  >
-                    {{ ticket.priority }}
-                  </span>
-                </td>
-                <td>{{ formatDate(ticket.created) }}</td>
-                <td>
-                  <button 
-                    class="btn btn-sm btn-outline-primary"
-                    @click="openTicket(ticket)"
-                  >
-                    Lihat
-                  </button>
+                  <button class="btn btn-sm btn-outline-primary" @click="openTicket(ticket)">Lihat</button>
                 </td>
               </tr>
               <tr v-if="filteredTickets.length === 0">
-                <td colspan="7" class="text-center py-4 text-muted">
-                  Tidak ada tiket yang sesuai dengan filter
-                </td>
+                <td colspan="7" class="text-center py-4 text-muted">Tidak ada tiket yang sesuai</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
-    </div>
 
-    <!-- Create Ticket Modal -->
-    <div class="modal" :class="{ show: showCreateTicket }" :style="{ display: showCreateTicket ? 'block' : 'none' }">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Buat Laporan Baru</h5>
-            <button type="button" class="btn-close" @click="showCreateTicket = false"></button>
-          </div>
-          <div class="modal-body">
-            <form>
+      <!-- Modal Create Ticket -->
+      <div class="modal fade" :class="{ show: showCreateTicket }" tabindex="-1" v-if="showCreateTicket" style="display: block;">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Buat Laporan Baru</h5>
+              <button type="button" class="btn-close" @click="showCreateTicket = false"></button>
+            </div>
+            <div class="modal-body">
               <div class="mb-3">
-                <label class="form-label">Judul Laporan</label>
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  v-model="newTicket.title"
-                  placeholder="Ringkas masalah Anda"
-                />
-              </div>
-              <div class="row mb-3">
-                <div class="col-md-6">
-                  <label class="form-label">Kategori</label>
-                  <select class="form-select" v-model="newTicket.category">
-                    <option>Teknis</option>
-                    <option>Logistik</option>
-                    <option>Registrasi</option>
-                    <option>Lainnya</option>
-                  </select>
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label">Prioritas</label>
-                  <select class="form-select" v-model="newTicket.priority">
-                    <option>Rendah</option>
-                    <option>Sedang</option>
-                    <option>Tinggi</option>
-                    <option>Kritis</option>
-                  </select>
-                </div>
+                <label class="form-label">Judul</label>
+                <input type="text" class="form-control" v-model="newTicket.judul" required />
               </div>
               <div class="mb-3">
-                <label class="form-label">Deskripsi Detail</label>
-                <textarea 
-                  class="form-control" 
-                  rows="5"
-                  v-model="newTicket.description"
-                  placeholder="Jelaskan masalah Anda secara detail"
-                ></textarea>
+                <label class="form-label">Kategori</label>
+                <select class="form-select" v-model="newTicket.kategori" required>
+                  <option value="Teknis">Teknis</option>
+                  <option value="Logistik">Logistik</option>
+                  <option value="Registrasi">Registrasi</option>
+                  <option value="Lainnya">Lainnya</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Prioritas</label>
+                <select class="form-select" v-model="newTicket.prioritas" required>
+                  <option value="rendah">Rendah</option>
+                  <option value="sedang">Sedang</option>
+                  <option value="tinggi">Tinggi</option>
+                  <option value="urgent">Kritis</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Deskripsi</label>
+                <textarea class="form-control" v-model="newTicket.deskripsi" rows="3" required></textarea>
               </div>
               <div class="mb-3">
                 <label class="form-label">Lampiran (opsional)</label>
-                <input 
-                  type="file" 
-                  class="form-control"
-                  @change="handleFileUpload"
-                  accept="image/*,.pdf,.doc,.docx"
-                />
-                <small class="text-muted">Ukuran maksimal: 5MB (image, PDF, atau dokumen)</small>
+                <input type="file" class="form-control" @change="handleFileUpload" />
               </div>
-            </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" @click="showCreateTicket = false">Batal</button>
+              <button type="button" class="btn btn-primary" @click="submitTicket">Kirim</button>
+            </div>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="showCreateTicket = false">
-              Batal
-            </button>
-            <button type="button" class="btn btn-primary" @click="submitTicket">
-              Buat Laporan
-            </button>
+        </div>
+      </div>
+
+      <!-- Modal Detail Ticket -->
+      <div class="modal fade" :class="{ show: showDetail }" tabindex="-1" v-if="showDetail" style="display: block;">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Detail Laporan #{{ selectedTicket.id }}</h5>
+              <button type="button" class="btn-close" @click="showDetail = false"></button>
+            </div>
+            <div class="modal-body">
+              <p><strong>Judul:</strong> {{ selectedTicket.judul }}</p>
+              <p><strong>Kategori:</strong> {{ selectedTicket.kategori }}</p>
+              <p><strong>Status:</strong> <span :class="getStatusClass(selectedTicket.status)" class="badge">{{ selectedTicket.status }}</span></p>
+              <p><strong>Prioritas:</strong> <span :class="getPriorityClass(selectedTicket.prioritas)" class="badge">{{ selectedTicket.prioritas }}</span></p>
+              <p><strong>Deskripsi:</strong> {{ selectedTicket.deskripsi }}</p>
+              <p><strong>Dibuat:</strong> {{ formatDate(selectedTicket.created_at) }}</p>
+              <p><strong>Feedback:</strong> {{ selectedTicket.feedback || '-' }}</p>
+              <p v-if="selectedTicket.lampiran"><strong>Lampiran:</strong> <a :href="selectedTicket.lampiran" target="_blank">Lihat File</a></p>
+              <div class="mb-3" v-if="selectedTicket.resolved">
+                <p><strong>Waktu Penyelesaian:</strong> {{ calculateDuration(selectedTicket.created_at, selectedTicket.resolved) }}</p>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" @click="showDetail = false">Tutup</button>
+              <button type="button" class="btn btn-primary" @click="submitFeedback" v-if="selectedTicket.status === 'Selesai' && !selectedTicket.feedback">Berikan Feedback</button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- Detail Modal -->
-    <div class="modal" :class="{ show: showDetail }" :style="{ display: showDetail ? 'block' : 'none' }">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" v-if="selectedTicket">Tiket #{{ selectedTicket.id }}</h5>
-            <button type="button" class="btn-close" @click="showDetail = false"></button>
-          </div>
-          <div class="modal-body" v-if="selectedTicket">
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <p><strong>Judul:</strong> {{ selectedTicket.title }}</p>
-                <p><strong>Kategori:</strong> {{ selectedTicket.category }}</p>
-              </div>
-              <div class="col-md-6">
-                <p>
-                  <strong>Status:</strong> 
-                  <span class="badge" :class="getStatusClass(selectedTicket.status)">
-                    {{ selectedTicket.status }}
-                  </span>
-                </p>
-                <p>
-                  <strong>Prioritas:</strong> 
-                  <span class="badge" :class="getPriorityClass(selectedTicket.priority)">
-                    {{ selectedTicket.priority }}
-                  </span>
-                </p>
-              </div>
-            </div>
-            <div class="mb-3">
-              <strong>Deskripsi:</strong>
-              <p class="mt-2">{{ selectedTicket.description }}</p>
-            </div>
-            <div class="mb-3">
-              <strong>Timeline:</strong>
-              <p class="text-muted">Dibuat: {{ formatDate(selectedTicket.created) }}</p>
-              <p class="text-muted" v-if="selectedTicket.resolved">
-                Selesai: {{ formatDate(selectedTicket.resolved) }}
-              </p>
-            </div>
-            <div v-if="selectedTicket.status === 'Selesai'" class="mb-3">
-              <label class="form-label"><strong>Feedback Anda</strong></label>
-              <textarea 
-                class="form-control" 
-                rows="3"
-                v-model="selectedTicket.feedback"
-                placeholder="Bagikan pengalaman Anda..."
-              ></textarea>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="showDetail = false">
-              Tutup
-            </button>
-            <button 
-              type="button" 
-              class="btn btn-primary" 
-              v-if="selectedTicket && selectedTicket.status === 'Selesai'"
-              @click="submitFeedback"
-            >
-              Simpan Feedback
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal Backdrop -->
-    <div 
-      class="modal-backdrop fade" 
-      :class="{ show: showCreateTicket || showDetail }"
-      :style="{ display: (showCreateTicket || showDetail) ? 'block' : 'none' }"
-    ></div>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
-  name: 'Laporan',
   data() {
     return {
-      currentView: 'tiket',
-      tickets: [
-        {
-          id: 'TK001',
-          title: 'Sound system tidak berfungsi',
-          category: 'Teknis',
-          status: 'Selesai',
-          priority: 'Kritis',
-          created: '2025-09-15T10:30:00',
-          resolved: '2025-09-15T12:45:00',
-          description: 'Sound system di stage utama tidak mengeluarkan suara sejak jam 10 pagi',
-          feedback: ''
-        },
-        {
-          id: 'TK002',
-          title: 'Kursi tidak sesuai jumlah peserta',
-          category: 'Logistik',
-          status: 'Dalam Proses',
-          priority: 'Tinggi',
-          created: '2025-09-16T08:00:00',
-          resolved: null,
-          description: 'Jumlah kursi yang disiapkan kurang 50 unit dari yang dikontrak',
-          feedback: ''
-        },
-        {
-          id: 'TK003',
-          title: 'Listrik mati di area VIP',
-          category: 'Teknis',
-          status: 'Menunggu Respon',
-          priority: 'Kritis',
-          created: '2025-09-16T14:20:00',
-          resolved: null,
-          description: 'Pemadaman listrik mendadak di ruang VIP, peserta tidak bisa masuk',
-          feedback: ''
-        },
-        {
-          id: 'TK004',
-          title: 'Dekorasi panggung belum selesai',
-          category: 'Logistik',
-          status: 'Dalam Proses',
-          priority: 'Sedang',
-          created: '2025-09-17T09:15:00',
-          resolved: null,
-          description: 'Backdrop dan dekorasi panggung belum dipasang sesuai jadwal',
-          feedback: ''
-        },
-        {
-          id: 'TK005',
-          title: 'WiFi tidak stabil',
-          category: 'Teknis',
-          status: 'Selesai',
-          priority: 'Sedang',
-          created: '2025-09-17T11:00:00',
-          resolved: '2025-09-17T14:30:00',
-          description: 'Koneksi WiFi sering putus di area lobby',
-          feedback: ''
-        }
-      ],
+      tickets: [],
       showCreateTicket: false,
       showDetail: false,
-      selectedTicket: null,
+      selectedTicket: {},
       newTicket: {
-        title: '',
-        category: 'Teknis',
-        priority: 'Sedang',
-        description: '',
+        judul: '',
+        kategori: 'Teknis',
+        prioritas: 'sedang',
+        deskripsi: '',
         file: null
       },
       searchQuery: '',
       filterStatus: '',
-      filterPriority: '',
-      sortBy: 'terbaru'
-    }
+      filterPriority: ''
+    };
   },
   computed: {
     filteredTickets() {
-      let filtered = this.tickets.filter(ticket => {
-        const matchSearch = !this.searchQuery || 
-          ticket.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          ticket.id.toLowerCase().includes(this.searchQuery.toLowerCase());
-        
+      return this.tickets.filter(ticket => {
+        const matchSearch = ticket.judul.toLowerCase().includes(this.searchQuery.toLowerCase()) || ticket.id.toString().includes(this.searchQuery);
         const matchStatus = !this.filterStatus || ticket.status === this.filterStatus;
-        const matchPriority = !this.filterPriority || ticket.priority === this.filterPriority;
-        
+        const matchPriority = !this.filterPriority || ticket.prioritas === this.filterPriority;
         return matchSearch && matchStatus && matchPriority;
       });
-
-      if (this.sortBy === 'terbaru') {
-        filtered.sort((a, b) => new Date(b.created) - new Date(a.created));
-      } else if (this.sortBy === 'prioritas') {
-        const priorityMap = { 'Kritis': 4, 'Tinggi': 3, 'Sedang': 2, 'Rendah': 1 };
-        filtered.sort((a, b) => priorityMap[b.priority] - priorityMap[a.priority]);
-      }
-
-      return filtered;
     }
+  },
+  mounted() {
+    // Cek apakah user bukan admin
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Silakan login terlebih dahulu');
+      this.$router.push('/login');
+      return;
+    }
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (payload.role === 'admin') {
+        alert('Admin tidak dapat mengakses halaman user');
+        this.$router.push('/dashboard');
+        return;
+      }
+    } catch (e) {
+      console.error('Error parsing token:', e);
+      alert('Token tidak valid');
+      this.$router.push('/login');
+      return;
+    }
+    this.fetchTickets();
   },
   methods: {
     countByStatus(status) {
       return this.tickets.filter(t => t.status === status).length;
     },
     countByPriority(priorities) {
-      return this.tickets.filter(t => priorities.includes(t.priority)).length;
+      return this.tickets.filter(t => priorities.includes(t.prioritas)).length;
     },
     getStatusClass(status) {
       const classes = {
@@ -415,14 +269,15 @@ export default {
     },
     getPriorityClass(priority) {
       const classes = {
-        'Kritis': 'bg-danger',
-        'Tinggi': 'bg-warning',
-        'Sedang': 'bg-info',
-        'Rendah': 'bg-success'
+        'urgent': 'bg-danger',
+        'tinggi': 'bg-warning',
+        'sedang': 'bg-info',
+        'rendah': 'bg-success'
       };
       return classes[priority] || 'bg-secondary';
     },
     formatDate(dateString) {
+      if (!dateString) return '-';
       const options = { 
         year: 'numeric', 
         month: 'short', 
@@ -435,45 +290,87 @@ export default {
     handleFileUpload(event) {
       this.newTicket.file = event.target.files[0];
     },
-    submitTicket() {
-      if (!this.newTicket.title || !this.newTicket.description) {
+    async submitTicket() {
+      if (!this.newTicket.judul || !this.newTicket.deskripsi) {
         alert('Judul dan deskripsi harus diisi');
         return;
       }
 
-      const ticket = {
-        id: `TK${String(this.tickets.length + 1).padStart(3, '0')}`,
-        title: this.newTicket.title,
-        category: this.newTicket.category,
-        status: 'Baru',
-        priority: this.newTicket.priority,
-        created: new Date().toISOString(),
-        resolved: null,
-        description: this.newTicket.description,
-        feedback: ''
-      };
+      const formData = new FormData();
+      formData.append('judul', this.newTicket.judul);
+      formData.append('kategori', this.newTicket.kategori);
+      formData.append('prioritas', this.newTicket.prioritas);
+      formData.append('deskripsi', this.newTicket.deskripsi);
+      if (this.newTicket.file) {
+        formData.append('lampiran', this.newTicket.file);
+      }
 
-      this.tickets.unshift(ticket);
-      this.resetForm();
-      this.showCreateTicket = false;
-      alert('Laporan berhasil dibuat!');
+      try {
+        await axios.post('/reports', formData, {
+          headers: { 
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        this.resetForm();
+        this.showCreateTicket = false;
+        alert('Laporan berhasil dibuat!');
+        this.fetchTickets();
+      } catch (error) {
+        console.error('Gagal membuat laporan:', error.response || error);
+        alert('Gagal membuat laporan: ' + (error.response?.data?.message || error.message));
+      }
     },
     resetForm() {
       this.newTicket = {
-        title: '',
-        category: 'Teknis',
-        priority: 'Sedang',
-        description: '',
+        judul: '',
+        kategori: 'Teknis',
+        prioritas: 'sedang',
+        deskripsi: '',
         file: null
       };
     },
-    openTicket(ticket) {
-      this.selectedTicket = JSON.parse(JSON.stringify(ticket));
-      this.showDetail = true;
+    async openTicket(ticket) {
+      try {
+        const response = await axios.get(`/reports/${ticket.id}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+        this.selectedTicket = response.data.data;
+        this.showDetail = true;
+      } catch (error) {
+        console.error('Gagal memuat detail laporan:', error.response || error);
+        alert('Gagal memuat detail laporan: ' + (error.response?.data?.message || error.message));
+      }
     },
     submitFeedback() {
       alert('Feedback berhasil disimpan. Terima kasih atas masukan Anda!');
       this.showDetail = false;
+    },
+    calculateDuration(created, resolved) {
+      if (!resolved) return '-';
+      const diff = new Date(resolved) - new Date(created);
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      return `${hours}h ${minutes}m`;
+    },
+    async fetchTickets() {
+      try {
+        const response = await axios.get('/reports', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+        this.tickets = response.data.data.map(ticket => ({
+          ...ticket,
+          status: ticket.status || 'Baru',
+          prioritas: ticket.prioritas,
+          judul: ticket.judul,
+          kategori: ticket.kategori,
+          created_at: ticket.created_at,
+          resolved: ticket.updated_at
+        }));
+      } catch (error) {
+        console.error('Gagal memuat laporan:', error.response || error);
+        alert('Gagal memuat laporan: ' + (error.response?.data?.message || error.message));
+      }
     }
   }
 }

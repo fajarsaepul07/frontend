@@ -41,7 +41,7 @@
                 <label class="form-label">Prioritas</label>
                 <select v-model="filters.prioritas_id" @change="fetchTickets" class="form-select">
                   <option value="">Semua Prioritas</option>
-                  <option v-for="priority in priorities" :key="priority.prioritas_id" :value="priority.prioritas_id">
+                  <option v-for="priority in prioritas" :key="priority.prioritas_id" :value="priority.prioritas_id">
                     {{ priority.nama_prioritas }}
                   </option>
                 </select>
@@ -126,8 +126,8 @@
                         <span class="badge bg-info">{{ ticket.kategoris?.nama_kategori || 'N/A' }}</span>
                       </td>
                       <td>
-                        <span :class="getPriorityClass(ticket.priorities?.nama_prioritas)">
-                          {{ ticket.priorities?.nama_prioritas || 'N/A' }}
+                        <span :class="getPriorityClass(ticket.prioritas?.nama_prioritas)">
+                          {{ ticket.prioritas?.nama_prioritas || 'N/A' }}
                         </span>
                       </td>
                       <td>
@@ -230,7 +230,7 @@
                   <label class="form-label">Prioritas <span class="text-danger">*</span></label>
                   <select v-model="form.prioritas_id" class="form-select" required>
                     <option value="">Pilih Prioritas</option>
-                    <option v-for="priority in priorities" :key="priority.prioritas_id" :value="priority.prioritas_id">
+                    <option v-for="priority in prioritas" :key="priority.prioritas_id" :value="priority.prioritas_id">
                       {{ priority.nama_prioritas }}
                     </option>
                   </select>
@@ -292,7 +292,7 @@ export default {
       users: [],
       events: [],
       kategoris: [],
-      priorities: [],
+      prioritas: [],
       statuses: [],
       admins: [],
       loading: false,
@@ -361,7 +361,7 @@ export default {
       return this.tickets.filter(t => t.status?.nama_status === 'Selesai').length;
     },
     highPriorityTickets() {
-      return this.tickets.filter(t => t.priorities?.nama_prioritas === 'Tinggi' || t.priorities?.nama_prioritas === 'Kritis').length;
+      return this.tickets.filter(t => t.prioritas?.nama_prioritas === 'Tinggi' || t.prioritas?.nama_prioritas === 'Kritis').length;
     },
     lastPage() {
       return Math.ceil(this.tickets.length / 10);
@@ -392,18 +392,18 @@ export default {
     
     async fetchMasterData() {
       try {
-        const [users, events, kategoris, priorities, statuses] = await Promise.all([
+        const [users, events, kategoris, prioritas, statuses] = await Promise.all([
           axios.get('/api/users'),
           axios.get('/api/events'),
           axios.get('/api/kategoris'),
-          axios.get('/api/priorities'),
+          axios.get('/api/prioritas'),
           axios.get('/api/tiket-statuses')
         ]);
         
         this.users = users.data.data;
         this.events = events.data.data;
         this.kategoris = kategoris.data.data;
-        this.priorities = priorities.data.data;
+        this.prioritas = prioritas.data.data;
         this.statuses = statuses.data.data;
         
         // Get admins (users with admin role)
@@ -466,7 +466,7 @@ export default {
     
     viewDetail(ticket) {
       // Navigate to detail page or open modal
-      this.$router.push(`/admin/tickets/${ticket.tiket_id}`);
+      this.$router.push(`/admin/tikets/${ticket.tiket_id}`);
     },
     
     closeModal() {

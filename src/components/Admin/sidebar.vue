@@ -1,3 +1,7 @@
+<!-- ==============================
+     FILE: src/components/Admin/sidebar.vue
+     ============================== -->
+
 <template>
   <div>
     <!-- Offcanvas untuk layar kecil -->
@@ -21,7 +25,7 @@
           <h6 class="mb-3 fw-semibold">Web Helpdesk</h6>
           <nav class="nav flex-column">
             <router-link to="/dashboard" class="nav-link text-white">Dasbor</router-link>
-            <router-link to="/admin/tickets" class="nav-link text-white">Tiket</router-link>
+            <router-link to="/admin/tikets" class="nav-link text-white">Tiket</router-link>
             <router-link to="/report" class="nav-link text-white-50">Report</router-link>
           </nav>
         </div>
@@ -38,7 +42,7 @@
 
         <nav class="nav flex-column sidebar-nav">
           <router-link to="/dashboard" class="nav-link">Dasbor</router-link>
-          <router-link to="/admin/tickets" class="nav-link">
+          <router-link to="/admin/tikets" class="nav-link">
             Tiket <span class="badge bg-secondary ms-2">0</span>
           </router-link>
           <router-link to="/report" class="nav-link">Report</router-link>

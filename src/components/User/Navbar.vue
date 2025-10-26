@@ -10,9 +10,6 @@
         <a href="#" :class="{ active: currentPage === 'home' }" @click.prevent="$emit('show-page', 'home')">🏠 Home</a>
       </li>
       <li>
-        <a href="#" @click.prevent="$emit('show-page', 'dashboard')">📊 Dashboard</a>
-      </li>
-      <li>
         <router-link to="/laporan" class="laporan-link">📋 Laporan</router-link>
       </li>
       <li>

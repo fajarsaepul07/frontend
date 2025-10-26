@@ -61,7 +61,7 @@ export default {
   methods: {
     async fetchTicket() {
       const id = this.$route.params.id;
-      const response = await axios.get(`/api/tickets/${id}`);
+      const response = await axios.get(`/api/tikets/${id}`);
       this.form = {
         status_id: response.data.data.status_id,
         prioritas_id: response.data.data.prioritas_id,
@@ -85,7 +85,7 @@ export default {
     async submitForm() {
       const id = this.$route.params.id;
       try {
-        await axios.put(`/api/tickets/${id}`, this.form);
+        await axios.put(`/api/tikets/${id}`, this.form);
         this.$router.push('/tiket');
       } catch (error) {
         console.error(error.response.data);

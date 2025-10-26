@@ -1,3 +1,7 @@
+// ==============================
+// FILE: src/router/index.js
+// ==============================
+
 import { createRouter, createWebHistory } from 'vue-router'
 
 // Import komponen
@@ -7,13 +11,15 @@ import TicketUpdate from '../components/Admin/tiket/update.vue'
 
 // ===== Admin Components =====
 import Content from '../components/Admin/content.vue'
-import Report from '../components/Admin/report.vue'
+import Report from '../components/Admin/report/report.vue'
+import ReportUpdate from '../components/Admin/report/update.vue'
 import AdminTiket from '../components/Admin/tiket/tiket.vue'
 
 // ===== Auth Components =====
 import Login from '../components/Auth/Login.vue'
 import Register from '../components/Auth/Register.vue'
 import LoginSuccess from '../components/Auth/LoginSuccess.vue' // Pastikan file ini ada
+
 // ===== User Components =====
 import User from '../components/User/ServicePortal.vue'
 import Tiket from '../components/User/Tiket.vue'
@@ -27,6 +33,8 @@ import StatusIndex from '../components/Admin/status/index.vue'
 import StatusCreate from '../components/Admin/status/create.vue'
 import StatusUpdate from '../components/Admin/status/update.vue'
 
+// ===== Error Components =====
+import Forbidden from '../components/Error/Forbidden.vue'
 
 const routes = [
   {
@@ -67,7 +75,7 @@ const routes = [
     path: '/usertiket',
     name: 'UserTiket',
     component: Tiket,
-    meta: { requiresAuth: true, layout: 'auth' } 
+    meta: { requiresAuth: true, layout: 'auth' }
   },
   {
     path: '/laporan',
@@ -76,7 +84,7 @@ const routes = [
     meta: { requiresAuth: true, layout: 'auth' }
   },
   {
-    path: '/admin/tickets',
+    path: '/admin/tikets',
     name: 'AdminTickets',
     component: AdminTiket,
     meta: { requiresAuth: true, layout: 'default' }
@@ -102,7 +110,7 @@ const routes = [
   {
     path: '/login-success',
     name: 'LoginSuccess',
-    component: LoginSuccess, // Komponen baru untuk menangani login Google
+    component: LoginSuccess,
     meta: { requiresAuth: false, layout: 'auth' }
   },
   {
@@ -131,14 +139,14 @@ const routes = [
     component: StatusCreate
   },
   {
-  path: '/admin/status/update/:id',
-  name: 'StatusUpdate',
-  component: StatusUpdate
+    path: '/admin/status/update/:id',
+    name: 'StatusUpdate',
+    component: StatusUpdate
   },
   {
-  path: '/admin/prioritas',
-  name: 'PrioritasIndex',
-  component: () => import('../components/Admin/prioritas/index.vue')
+    path: '/admin/prioritas',
+    name: 'PrioritasIndex',
+    component: () => import('../components/Admin/prioritas/index.vue')
   },
   {
     path: '/admin/prioritas/create',
@@ -151,9 +159,9 @@ const routes = [
     component: () => import('../components/Admin/prioritas/update.vue')
   },
   {
-  path: '/admin/event',
-  name: 'EventIndex',
-  component: () => import('../components/Admin/Event/index.vue')
+    path: '/admin/event',
+    name: 'EventIndex',
+    component: () => import('../components/Admin/Event/index.vue')
   },
   {
     path: '/admin/event/create',
@@ -164,6 +172,18 @@ const routes = [
     path: '/admin/event/update/:id',
     name: 'EventUpdate',
     component: () => import('../components/Admin/Event/update.vue')
+  },
+  {
+    path: '/forbidden',
+    name: 'Forbidden',
+    component: Forbidden,
+    meta: { requiresAuth: false, layout: 'auth' }
+  },
+  {
+    path: '/admin/report/update/:id',
+    name: 'ReportUpdate',
+    component: ReportUpdate,
+    meta: { requiresAuth: true, layout: 'default' }
   },
 ]
 
