@@ -45,7 +45,15 @@ export default {
     const authState = instance.appContext.config.globalProperties.$authState // Mengambil $authState dari globalProperties
 
     // Ambil data user dari localStorage
-    const user = JSON.parse(localStorage.getItem('user') || '{}')
+    let user = null
+try {
+  const saved = localStorage.getItem('user')
+  user = saved ? JSON.parse(saved) : null
+} catch (e) {
+  console.error('Invalid user data in localStorage, clearing it')
+  localStorage.removeItem('user')
+}
+
     
     // Komputasi apakah pengguna adalah admin
     const isAdmin = computed(() => user.role === 'admin')
