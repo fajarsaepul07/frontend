@@ -6,7 +6,7 @@
           <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h5 class="mb-0">
               <i class="bi bi-ticket-detailed me-2"></i>
-              Manajemen Tiket Admin
+              Manajemen Tiket
             </h5>
             <router-link to="/tiket/create" class="btn btn-light">
               <i class="bi bi-plus-circle me-1"></i>
@@ -15,11 +15,11 @@
           </div>
 
           <div class="card-body">
-            <!-- Filter -->
+            <!-- Filter Section -->
             <div class="row mb-4">
               <div class="col-md-3">
                 <label class="form-label">Status</label>
-                <select v-model="filters.status_id" @change="fetchTickets" class="form-select">
+                <select v-model="filters.status_id" @change="applyFilters" class="form-select">
                   <option value="">Semua Status</option>
                   <option v-for="status in statuses" :key="status.status_id" :value="status.status_id">
                     {{ status.nama_status }}
@@ -28,7 +28,7 @@
               </div>
               <div class="col-md-3">
                 <label class="form-label">Kategori</label>
-                <select v-model="filters.kategori_id" @change="fetchTickets" class="form-select">
+                <select v-model="filters.kategori_id" @change="applyFilters" class="form-select">
                   <option value="">Semua Kategori</option>
                   <option v-for="kategori in kategoris" :key="kategori.kategori_id" :value="kategori.kategori_id">
                     {{ kategori.nama_kategori }}
@@ -37,14 +37,15 @@
               </div>
               <div class="col-md-3">
                 <label class="form-label">Prioritas</label>
-                <select v-model="filters.prioritas_id" @change="fetchTickets" class="form-select">
+                <select v-model="filters.prioritas_id" @change="applyFilters" class="form-select">
                   <option value="">Semua Prioritas</option>
-                  <option v-for="priority in prioritas" :key="priority.prioritas_id" :value="priority.prioritas_id">
+                  <option v-for="priority in priorities" :key="priority.prioritas_id" :value="priority.prioritas_id">
                     {{ priority.nama_prioritas }}
                   </option>
                 </select>
               </div>
               <div class="col-md-3">
+                <label class="form-label">&nbsp;</label>
                 <button class="btn btn-outline-secondary w-100" @click="resetFilters">
                   <i class="bi bi-arrow-clockwise me-1"></i>
                   Reset Filter
@@ -52,33 +53,41 @@
               </div>
             </div>
 
-            <!-- Statistik -->
+            <!-- Statistics Cards -->
             <div class="row mb-4">
               <div class="col-md-3" v-for="card in statsCards" :key="card.title">
                 <div class="card bg-light">
                   <div class="card-body text-center">
-                    <h5 class="card-title text-muted">{{ card.title }}</h5>
-                    <h3 :class="card.class">{{ card.value }}</h3>
+                    <h6 class="card-title text-muted mb-2">{{ card.title }}</h6>
+                    <h3 :class="card.class" class="mb-0">{{ card.value }}</h3>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Loading -->
+            <!-- Loading Indicator -->
             <div v-if="loading" class="text-center py-5">
               <div class="spinner-border text-primary" role="status">
                 <span class="visually-hidden">Loading...</span>
               </div>
+              <p class="mt-2 text-muted">Memuat data tiket...</p>
+            </div>
+
+            <!-- Error Message -->
+            <div v-if="error" class="alert alert-danger alert-dismissible fade show" role="alert">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              {{ error }}
+              <button type="button" class="btn-close" @click="error = ''"></button>
             </div>
 
             <!-- Table -->
-            <div v-else>
+            <div v-else-if="!loading">
               <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-hover align-middle">
                   <thead class="table-dark">
                     <tr>
-                      <th>ID Tiket</th>
-                      <th>Kode</th>
+                      <th>ID</th>
+                      <th>Kode Tiket</th>
                       <th>Judul</th>
                       <th>User</th>
                       <th>Event</th>
@@ -90,36 +99,52 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="ticket in filteredTickets" :key="ticket.tiket_id">
+                    <tr v-for="ticket in paginatedTickets" :key="ticket.tiket_id">
                       <td><strong>#{{ ticket.tiket_id }}</strong></td>
-                      <td>{{ ticket.kode_tiket }}</td>
-                      <td>{{ ticket.judul }}</td>
+                      <td>
+                        <span class="badge bg-secondary">{{ ticket.kode_tiket }}</span>
+                      </td>
+                      <td>
+                        <div class="text-truncate" style="max-width: 200px;" :title="ticket.judul">
+                          {{ ticket.judul }}
+                        </div>
+                      </td>
                       <td>{{ ticket.user?.name || 'N/A' }}</td>
                       <td>{{ ticket.event?.nama_event || 'N/A' }}</td>
-                      <td><span class="badge bg-info">{{ ticket.kategoris?.nama_kategori || 'N/A' }}</span></td>
-                      <td><span :class="getPriorityClass(ticket.prioritas?.nama_prioritas)">
-                        {{ ticket.prioritas?.nama_prioritas || 'N/A' }}
-                      </span></td>
-                      <td><span :class="getStatusClass(ticket.status?.nama_status)">
-                        {{ ticket.status?.nama_status || 'N/A' }}
-                      </span></td>
+                      <td>
+                        <span class="badge bg-info">
+                          {{ ticket.kategoris?.nama_kategori || 'N/A' }}
+                        </span>
+                      </td>
+                      <td>
+                        <span :class="getPriorityClass(ticket.priorities?.nama_prioritas)">
+                          {{ ticket.priorities?.nama_prioritas || 'N/A' }}
+                        </span>
+                      </td>
+                      <td>
+                        <span :class="getStatusClass(ticket.status?.nama_status)">
+                          {{ ticket.status?.nama_status || 'N/A' }}
+                        </span>
+                      </td>
                       <td>{{ formatDate(ticket.waktu_dibuat) }}</td>
                       <td>
-                        <button class="btn btn-sm btn-info me-1" @click="viewDetail(ticket)">
-                          <i class="bi bi-eye"></i>
-                        </button>
-                        <button class="btn btn-sm btn-warning me-1" @click="editTicket(ticket)">
-                          <i class="bi bi-pencil"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger" @click="deleteTicket(ticket.tiket_id)">
-                          <i class="bi bi-trash"></i>
-                        </button>
+                        <div class="btn-group btn-group-sm" role="group">
+                          <button class="btn btn-info" @click="viewDetail(ticket)" title="Detail">
+                            <i class="bi bi-eye"></i>
+                          </button>
+                          <button class="btn btn-warning" @click="editTicket(ticket)" title="Edit">
+                            <i class="bi bi-pencil"></i>
+                          </button>
+                          <button class="btn btn-danger" @click="deleteTicket(ticket.tiket_id)" title="Hapus">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
                       </td>
                     </tr>
                     <tr v-if="filteredTickets.length === 0">
-                      <td colspan="10" class="text-center py-4 text-muted">
-                        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
-                        Tidak ada tiket yang ditemukan
+                      <td colspan="10" class="text-center py-5 text-muted">
+                        <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+                        <p class="mb-0">Tidak ada tiket yang ditemukan</p>
                       </td>
                     </tr>
                   </tbody>
@@ -127,23 +152,41 @@
               </div>
 
               <!-- Pagination -->
-              <div class="d-flex justify-content-between align-items-center mt-3">
+              <div class="d-flex justify-content-between align-items-center mt-4" v-if="filteredTickets.length > 0">
                 <div class="text-muted">
-                  Menampilkan {{ filteredTickets.length }} dari {{ totalTickets }} tiket
+                  Menampilkan {{ startIndex + 1 }} - {{ endIndex }} dari {{ filteredTickets.length }} tiket
                 </div>
                 <nav>
                   <ul class="pagination mb-0">
                     <li class="page-item" :class="{ disabled: currentPage === 1 }">
-                      <button class="page-link" @click="currentPage = 1">Pertama</button>
+                      <button class="page-link" @click="currentPage = 1" :disabled="currentPage === 1">
+                        Pertama
+                      </button>
                     </li>
                     <li class="page-item" :class="{ disabled: currentPage === 1 }">
-                      <button class="page-link" @click="currentPage--">&laquo; Sebelumnya</button>
+                      <button class="page-link" @click="currentPage--" :disabled="currentPage === 1">
+                        &laquo;
+                      </button>
+                    </li>
+                    <li 
+                      class="page-item" 
+                      v-for="page in visiblePages" 
+                      :key="page"
+                      :class="{ active: currentPage === page }"
+                    >
+                      <button class="page-link" @click="currentPage = page">
+                        {{ page }}
+                      </button>
                     </li>
                     <li class="page-item" :class="{ disabled: currentPage === lastPage }">
-                      <button class="page-link" @click="currentPage++">Selanjutnya &raquo;</button>
+                      <button class="page-link" @click="currentPage++" :disabled="currentPage === lastPage">
+                        &raquo;
+                      </button>
                     </li>
                     <li class="page-item" :class="{ disabled: currentPage === lastPage }">
-                      <button class="page-link" @click="currentPage = lastPage">Terakhir</button>
+                      <button class="page-link" @click="currentPage = lastPage" :disabled="currentPage === lastPage">
+                        Terakhir
+                      </button>
                     </li>
                   </ul>
                 </nav>
@@ -159,38 +202,102 @@
 <script>
 import axios from 'axios'
 
-// ✅ Tambahkan baseURL agar semua request langsung ke Laravel
 axios.defaults.baseURL = 'http://localhost:8000'
 
 export default {
-  name: 'AdminTiket',
+  name: 'TiketIndex',
+  
   data() {
     return {
       tickets: [],
-      users: [],
-      events: [],
-      kategoris: [],
-      prioritas: [],
       statuses: [],
-      admins: [],
+      kategoris: [],
+      priorities: [],
       loading: false,
+      error: '',
       currentPage: 1,
-      filters: { status_id: '', kategori_id: '', prioritas_id: '' },
+      perPage: 10,
+      filters: {
+        status_id: '',
+        kategori_id: '',
+        prioritas_id: ''
+      }
     }
   },
+
   computed: {
     filteredTickets() {
-      let f = [...this.tickets]
-      if (this.filters.status_id) f = f.filter(t => t.status_id == this.filters.status_id)
-      if (this.filters.kategori_id) f = f.filter(t => t.kategori_id == this.filters.kategori_id)
-      if (this.filters.prioritas_id) f = f.filter(t => t.prioritas_id == this.filters.prioritas_id)
-      const start = (this.currentPage - 1) * 10
-      return f.slice(start, start + 10)
+      let filtered = [...this.tickets]
+      
+      if (this.filters.status_id) {
+        filtered = filtered.filter(t => t.status_id == this.filters.status_id)
+      }
+      
+      if (this.filters.kategori_id) {
+        filtered = filtered.filter(t => t.kategori_id == this.filters.kategori_id)
+      }
+      
+      if (this.filters.prioritas_id) {
+        filtered = filtered.filter(t => t.prioritas_id == this.filters.prioritas_id)
+      }
+      
+      return filtered
     },
-    totalTickets() { return this.tickets.length },
-    processingTickets() { return this.tickets.filter(t => t.status?.nama_status === 'Dalam Proses').length },
-    completedTickets() { return this.tickets.filter(t => t.status?.nama_status === 'Selesai').length },
-    highPriorityTickets() { return this.tickets.filter(t => ['Tinggi','Kritis'].includes(t.prioritas?.nama_prioritas)).length },
+
+    paginatedTickets() {
+      const start = (this.currentPage - 1) * this.perPage
+      const end = start + this.perPage
+      return this.filteredTickets.slice(start, end)
+    },
+
+    lastPage() {
+      return Math.ceil(this.filteredTickets.length / this.perPage) || 1
+    },
+
+    startIndex() {
+      return (this.currentPage - 1) * this.perPage
+    },
+
+    endIndex() {
+      const end = this.currentPage * this.perPage
+      return end > this.filteredTickets.length ? this.filteredTickets.length : end
+    },
+
+    visiblePages() {
+      const pages = []
+      const maxVisible = 5
+      let start = Math.max(1, this.currentPage - Math.floor(maxVisible / 2))
+      let end = Math.min(this.lastPage, start + maxVisible - 1)
+      
+      if (end - start + 1 < maxVisible) {
+        start = Math.max(1, end - maxVisible + 1)
+      }
+      
+      for (let i = start; i <= end; i++) {
+        pages.push(i)
+      }
+      
+      return pages
+    },
+
+    totalTickets() {
+      return this.tickets.length
+    },
+
+    processingTickets() {
+      return this.tickets.filter(t => t.status?.nama_status === 'Dalam Proses').length
+    },
+
+    completedTickets() {
+      return this.tickets.filter(t => t.status?.nama_status === 'Selesai').length
+    },
+
+    highPriorityTickets() {
+      return this.tickets.filter(t => 
+        ['Tinggi', 'Kritis'].includes(t.priorities?.nama_prioritas)
+      ).length
+    },
+
     statsCards() {
       return [
         { title: 'Total Tiket', value: this.totalTickets, class: 'text-primary' },
@@ -198,78 +305,138 @@ export default {
         { title: 'Selesai', value: this.completedTickets, class: 'text-success' },
         { title: 'Prioritas Tinggi', value: this.highPriorityTickets, class: 'text-danger' }
       ]
-    },
-    lastPage() { return Math.ceil(this.tickets.length / 10) }
+    }
   },
+
   mounted() {
-    this.fetchTickets()
-    this.fetchMasterData()
+    this.fetchAllData()
   },
+
   methods: {
-    async fetchTickets() {
+    async fetchAllData() {
       this.loading = true
+      this.error = ''
+      
       try {
-        const res = await axios.get('/api/tikets')
-        this.tickets = res.data.data
+        await Promise.all([
+          this.fetchTickets(),
+          this.fetchMasterData()
+        ])
       } catch (e) {
-        console.error('Error fetching tickets:', e)
+        console.error('Error fetching data:', e)
+        this.error = 'Gagal memuat data. Silakan refresh halaman.'
       } finally {
         this.loading = false
       }
     },
-    async fetchMasterData() {
+
+    async fetchTickets() {
       try {
-        const [users, events, kategoris, prioritas, statuses] = await Promise.all([
-          axios.get('/users'),
-          axios.get('/events'),
-          axios.get('/kategoris'),
-          axios.get('/prioritas'),
-          axios.get('/tiket-statuses')
-        ])
-        this.users = users.data.data
-        this.events = events.data.data
-        this.kategoris = kategoris.data.data
-        this.prioritas = prioritas.data.data
-        this.statuses = statuses.data.data
+        const params = {}
+        if (this.filters.status_id) params.status_id = this.filters.status_id
+        if (this.filters.kategori_id) params.kategori_id = this.filters.kategori_id
+        if (this.filters.prioritas_id) params.prioritas_id = this.filters.prioritas_id
+
+        const res = await axios.get('/tikets', { params })
+        
+        if (res.data.status && res.data.data) {
+          this.tickets = res.data.data
+        } else {
+          this.tickets = []
+        }
       } catch (e) {
-        console.error('Error fetching master data:', e)
+        console.error('Error fetching tickets:', e)
+        throw e
       }
     },
-    resetFilters() {
-      this.filters = { status_id: '', kategori_id: '', prioritas_id: '' }
+
+    async fetchMasterData() {
+      try {
+        const [statusRes, kategoriRes, prioritasRes] = await Promise.all([
+          axios.get('/tiket-statuses'),
+          axios.get('/kategoris'),
+          axios.get('/prioritas')
+        ])
+
+        this.statuses = statusRes.data.data || []
+        this.kategoris = kategoriRes.data.data || []
+        this.priorities = prioritasRes.data.data || []
+      } catch (e) {
+        console.error('Error fetching master data:', e)
+        throw e
+      }
+    },
+
+    applyFilters() {
+      this.currentPage = 1
       this.fetchTickets()
     },
-    getPriorityClass(p) {
-      return {
+
+    resetFilters() {
+      this.filters = {
+        status_id: '',
+        kategori_id: '',
+        prioritas_id: ''
+      }
+      this.currentPage = 1
+      this.fetchTickets()
+    },
+
+    getPriorityClass(priority) {
+      const classes = {
         'Kritis': 'badge bg-danger',
         'Tinggi': 'badge bg-warning text-dark',
         'Sedang': 'badge bg-info',
         'Rendah': 'badge bg-success'
-      }[p] || 'badge bg-secondary'
+      }
+      return classes[priority] || 'badge bg-secondary'
     },
-    getStatusClass(s) {
-      return {
+
+    getStatusClass(status) {
+      const classes = {
         'Baru': 'badge bg-primary',
         'Dalam Proses': 'badge bg-warning text-dark',
         'Menunggu Respon': 'badge bg-info',
-        'Selesai': 'badge bg-success'
-      }[s] || 'badge bg-secondary'
+        'Selesai': 'badge bg-success',
+        'Ditutup': 'badge bg-secondary'
+      }
+      return classes[status] || 'badge bg-secondary'
     },
-    formatDate(d) {
-      if (!d) return '-'
-      return new Date(d).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+
+    formatDate(date) {
+      if (!date) return '-'
+      
+      const d = new Date(date)
+      return d.toLocaleDateString('id-ID', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })
     },
-    viewDetail(ticket) { this.$router.push(`/admin/tikets/${ticket.tiket_id}`) },
-    editTicket(ticket) { this.$router.push(`/tiket/edit/${ticket.tiket_id}`) },
+
+    viewDetail(ticket) {
+      this.$router.push(`/tiket/${ticket.tiket_id}`)
+    },
+
+    editTicket(ticket) {
+      this.$router.push(`/tiket/edit/${ticket.tiket_id}`)
+    },
+
     async deleteTicket(id) {
-      if (!confirm('Yakin hapus tiket ini?')) return
+      if (!confirm('Apakah Anda yakin ingin menghapus tiket ini?')) return
+
       try {
-        await axios.delete(`/api/tikets/${id}`)
-        alert('Tiket berhasil dihapus')
-        this.fetchTickets()
+        const res = await axios.delete(`/tikets/${id}`)
+        
+        if (res.data.status) {
+          alert('✅ Tiket berhasil dihapus')
+          this.fetchTickets()
+        }
       } catch (e) {
-        console.error(e)
-        alert('Gagal menghapus tiket')
+        console.error('Error deleting ticket:', e)
+        alert('❌ Gagal menghapus tiket')
       }
     }
   }
@@ -277,9 +444,117 @@ export default {
 </script>
 
 <style scoped>
-.card { border: none; box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075); }
-.badge { padding: 0.5em 0.75em; font-size: 0.875em; }
-.table th { border-top: none; background-color: #f8f9fa; }
-.pagination .page-link { color: #0d6efd; }
-.form-label { font-weight: 600; color: #495057; }
+.card {
+  border: none;
+  border-radius: 10px;
+}
+
+.card-header {
+  border-radius: 10px 10px 0 0 !important;
+  padding: 1.25rem;
+}
+
+.badge {
+  padding: 0.5em 0.75em;
+  font-size: 0.875em;
+  font-weight: 500;
+}
+
+.table {
+  margin-bottom: 0;
+}
+
+.table thead th {
+  border-bottom: 2px solid #dee2e6;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background-color: #f8f9fa;
+  transform: scale(1.01);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.btn-group-sm > .btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.form-select {
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  transition: all 0.2s ease;
+}
+
+.form-select:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+.pagination {
+  gap: 0.25rem;
+}
+
+.page-link {
+  color: #0d6efd;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+  padding: 0.5rem 0.75rem;
+  margin: 0 0.125rem;
+  transition: all 0.2s ease;
+}
+
+.page-link:hover {
+  background-color: #0d6efd;
+  color: white;
+  border-color: #0d6efd;
+}
+
+.page-item.active .page-link {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.page-item.disabled .page-link {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.text-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+@media (max-width: 768px) {
+  .table {
+    font-size: 0.875rem;
+  }
+  
+  .btn-group-sm > .btn {
+    padding: 0.2rem 0.4rem;
+  }
+  
+  .card-header h5 {
+    font-size: 1rem;
+  }
+}
 </style>

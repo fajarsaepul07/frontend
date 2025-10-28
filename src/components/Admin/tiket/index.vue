@@ -71,25 +71,27 @@ export default {
   methods: {
     async fetchTickets() {
       const params = { ...this.filters };
-      const response = await axios.get('/api/tikets', { params });
+      const response = await axios.get('/tikets', { params });
+      console.log(response.body);
+      
       this.tickets = response.data.data;
     },
     async fetchStatuses() {
-      const response = await axios.get('/api/tiket-statuses');
+      const response = await axios.get('/tiket-statuses');
       this.statuses = response.data.data;
     },
     async fetchKategoris() {
-      const response = await axios.get('/api/kategoris');
+      const response = await axios.get('/kategoris');
       this.kategoris = response.data.data;
     },
     async fetchPriorities() {
-      const response = await axios.get('/api/priorities');
+      const response = await axios.get('/priorities');
       this.priorities = response.data.data;
     },
     async deleteTicket(id) {
       if (confirm('Are you sure you want to delete this ticket?')) {
         try {
-          await axios.delete(`/api/tikets/${id}`);
+          await axios.delete(`/tikets/${id}`);
           this.fetchTickets();
         } catch (error) {
           console.error(error);
