@@ -27,11 +27,11 @@
                 </select>
               </div>
               <div class="col-md-3">
-                <label class="form-label">Kategori</label>
-                <select v-model="filters.kategori_id" @change="applyFilters" class="form-select">
-                  <option value="">Semua Kategori</option>
-                  <option v-for="kategori in kategoris" :key="kategori.kategori_id" :value="kategori.kategori_id">
-                    {{ kategori.nama_kategori }}
+                <label class="form-label">Kategoris</label>
+                <select v-model="filters.kategoris_id" @change="applyFilters" class="form-select">
+                  <option value="">Semua Kategoris</option>
+                  <option v-for="kategoris in kategoris" :key="kategoris.kategori_id" :value="kategoris.kategori_id">
+                    {{ kategoris.nama_kategori }}
                   </option>
                 </select>
               </div>
@@ -91,7 +91,7 @@
                       <th>Judul</th>
                       <th>User</th>
                       <th>Event</th>
-                      <th>Kategori</th>
+                      <th>Kategoris</th>
                       <th>Prioritas</th>
                       <th>Status</th>
                       <th>Waktu Dibuat</th>
@@ -113,12 +113,12 @@
                       <td>{{ ticket.event?.nama_event || 'N/A' }}</td>
                       <td>
                         <span class="badge bg-info">
-                          {{ ticket.kategoris?.nama_kategori || 'N/A' }}
+                          {{ ticket.kategori?.nama_kategori || '-' }}
                         </span>
                       </td>
                       <td>
-                        <span :class="getPriorityClass(ticket.priorities?.nama_prioritas)">
-                          {{ ticket.priorities?.nama_prioritas || 'N/A' }}
+                        <span :class="getPriorityClass(ticket.prioritas?.nama_prioritas)">
+                          {{ ticket.prioritas?.nama_prioritas || '-' }}
                         </span>
                       </td>
                       <td>
@@ -202,7 +202,7 @@
 <script>
 import axios from 'axios'
 
-axios.defaults.baseURL = 'http://localhost:8000'
+axios.defaults.baseURL = 'http://localhost:8000/api'
 
 export default {
   name: 'TiketIndex',
@@ -219,7 +219,7 @@ export default {
       perPage: 10,
       filters: {
         status_id: '',
-        kategori_id: '',
+        kategoris_id: '',
         prioritas_id: ''
       }
     }
@@ -227,21 +227,7 @@ export default {
 
   computed: {
     filteredTickets() {
-      let filtered = [...this.tickets]
-      
-      if (this.filters.status_id) {
-        filtered = filtered.filter(t => t.status_id == this.filters.status_id)
-      }
-      
-      if (this.filters.kategori_id) {
-        filtered = filtered.filter(t => t.kategori_id == this.filters.kategori_id)
-      }
-      
-      if (this.filters.prioritas_id) {
-        filtered = filtered.filter(t => t.prioritas_id == this.filters.prioritas_id)
-      }
-      
-      return filtered
+      return this.tickets
     },
 
     paginatedTickets() {
@@ -294,7 +280,7 @@ export default {
 
     highPriorityTickets() {
       return this.tickets.filter(t => 
-        ['Tinggi', 'Kritis'].includes(t.priorities?.nama_prioritas)
+        ['Tinggi', 'Kritis'].includes(t.prioritas?.nama_prioritas)
       ).length
     },
 
@@ -334,7 +320,7 @@ export default {
       try {
         const params = {}
         if (this.filters.status_id) params.status_id = this.filters.status_id
-        if (this.filters.kategori_id) params.kategori_id = this.filters.kategori_id
+        if (this.filters.kategoris_id) params.kategoris_id = this.filters.kategoris_id
         if (this.filters.prioritas_id) params.prioritas_id = this.filters.prioritas_id
 
         const res = await axios.get('/tikets', { params })
@@ -352,14 +338,14 @@ export default {
 
     async fetchMasterData() {
       try {
-        const [statusRes, kategoriRes, prioritasRes] = await Promise.all([
+        const [statusRes, kategorisRes, prioritasRes] = await Promise.all([
           axios.get('/tiket-statuses'),
           axios.get('/kategoris'),
           axios.get('/prioritas')
         ])
 
         this.statuses = statusRes.data.data || []
-        this.kategoris = kategoriRes.data.data || []
+        this.kategoris = kategorisRes.data.data || []
         this.priorities = prioritasRes.data.data || []
       } catch (e) {
         console.error('Error fetching master data:', e)
@@ -375,7 +361,7 @@ export default {
     resetFilters() {
       this.filters = {
         status_id: '',
-        kategori_id: '',
+        kategoris_id: '',
         prioritas_id: ''
       }
       this.currentPage = 1
@@ -416,7 +402,18 @@ export default {
       })
     },
 
+    // Di TiketIndex.vue - methods
     viewDetail(ticket) {
+      // Debug: pastikan ticket.tiket_id ada
+      console.log('View detail ticket:', ticket)
+      console.log('Tiket ID:', ticket.tiket_id)
+      
+      if (!ticket.tiket_id) {
+        alert('ID Tiket tidak valid')
+        return
+      }
+      
+      // Navigasi ke halaman detail
       this.$router.push(`/tiket/${ticket.tiket_id}`)
     },
 
@@ -424,11 +421,11 @@ export default {
       this.$router.push(`/tiket/edit/${ticket.tiket_id}`)
     },
 
-    async deleteTicket(id) {
+    async deleteTicket(tiket_id) {
       if (!confirm('Apakah Anda yakin ingin menghapus tiket ini?')) return
 
       try {
-        const res = await axios.delete(`/tikets/${id}`)
+        const res = await axios.delete(`/tikets/${tiket_id}`)
         
         if (res.data.status) {
           alert('✅ Tiket berhasil dihapus')

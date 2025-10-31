@@ -1,30 +1,27 @@
-// ==============================
-// FILE: src/router/index.js
-// ==============================
-
 import { createRouter, createWebHistory } from 'vue-router'
 
-// Import komponen
-import TicketIndex from '../components/Admin/tiket/index.vue'
-import TicketCreate from '../components/Admin/tiket/create.vue'
-import TicketUpdate from '../components/Admin/tiket/update.vue'
+// ===== Tiket Components (FIXED) =====
+import TiketIndex from '../components/Admin/tiket/tiket.vue'
+import TiketCreate from '../components/Admin/tiket/create.vue'
+import TiketShow from '../components/Admin/tiket/show.vue'
+import TiketUpdate from '../components/Admin/tiket/update.vue'
 
 // ===== Admin Components =====
 import Content from '../components/Admin/content.vue'
 import Report from '../components/Admin/report/report.vue'
 import ReportUpdate from '../components/Admin/report/update.vue'
-import AdminTiket from '../components/Admin/tiket/tiket.vue'
 
 // ===== Auth Components =====
 import Login from '../components/Auth/Login.vue'
 import Register from '../components/Auth/Register.vue'
-import LoginSuccess from '../components/Auth/LoginSuccess.vue' // Pastikan file ini ada
+import LoginSuccess from '../components/Auth/LoginSuccess.vue'
 
 // ===== User Components =====
 import User from '../components/User/ServicePortal.vue'
-import Tiket from '../components/User/Tiket.vue'
+import UserTiket from '../components/User/Tiket.vue'
 import Laporan from '../components/User/Laporan.vue'
 
+// ===== Master Data Components =====
 import KategoriIndex from '../components/Admin/kategori/index.vue'
 import KategoriCreate from '../components/Admin/kategori/create.vue'
 import KategoriUpdate from '../components/Admin/kategori/update.vue'
@@ -37,16 +34,21 @@ import StatusUpdate from '../components/Admin/status/update.vue'
 import Forbidden from '../components/Error/Forbidden.vue'
 
 const routes = [
+  // ===== Redirect Root =====
   {
     path: '/',
     redirect: '/dashboard'
   },
+
+  // ===== Dashboard =====
   {
     path: '/dashboard',
     name: 'Dashboard',
     component: Content,
     meta: { requiresAuth: true, layout: 'default' }
   },
+
+  // ===== Authentication Routes =====
   {
     path: '/login',
     name: 'Login',
@@ -60,22 +62,24 @@ const routes = [
     meta: { requiresAuth: false, layout: 'auth' }
   },
   {
+    path: '/login-success',
+    name: 'LoginSuccess',
+    component: LoginSuccess,
+    meta: { requiresAuth: false, layout: 'auth' }
+  },
+
+  // ===== User Routes =====
+  {
     path: '/user',
     name: 'User',
     component: User,
     meta: { requiresAuth: true, layout: 'auth' }
   },
   {
-    path: '/report',
-    name: 'Report',
-    component: Report,
-    meta: { requiresAuth: true, layout: 'default' }
-  },
-  {
     path: '/usertiket',
     name: 'UserTiket',
-    component: Tiket,
-    meta: { requiresAuth: true, layout: 'auth' }
+    component: UserTiket,
+    meta: { requiresAuth: false, layout: 'auth' }  // ✅ Temporary: false untuk testing
   },
   {
     path: '/laporan',
@@ -83,101 +87,13 @@ const routes = [
     component: Laporan,
     meta: { requiresAuth: true, layout: 'auth' }
   },
+
+  // ===== Report Routes =====
   {
-    path: '/admin/tikets',
-    name: 'AdminTickets',
-    component: AdminTiket,
+    path: '/report',
+    name: 'Report',
+    component: Report,
     meta: { requiresAuth: true, layout: 'default' }
-  },
-  {
-    path: '/tiket',
-    name: 'Tiket',
-    component: TicketIndex,
-    meta: { requiresAuth: true, layout: 'auth' }
-  },
-  {
-    path: '/tiket/create',
-    name: 'TiketCreate',
-    component: TicketCreate,
-    meta: { requiresAuth: true, layout: 'auth' }
-  },
-  {
-    path: '/tiket/update/:id',
-    name: 'TiketUpdate',
-    component: TicketUpdate,
-    meta: { requiresAuth: true, layout: 'auth' }
-  },
-  {
-    path: '/login-success',
-    name: 'LoginSuccess',
-    component: LoginSuccess,
-    meta: { requiresAuth: false, layout: 'auth' }
-  },
-  {
-    path: '/admin/kategori',
-    name: 'KategoriIndex',
-    component: KategoriIndex
-  },
-  {
-    path: '/admin/kategori/create',
-    name: 'KategoriCreate',
-    component: KategoriCreate
-  },
-  {
-    path: '/admin/kategori/update/:id',
-    name: 'KategoriUpdate',
-    component: KategoriUpdate
-  },
-  {
-    path: '/admin/status',
-    name: 'StatusIndex',
-    component: StatusIndex
-  },
-  {
-    path: '/admin/status/create',
-    name: 'StatusCreate',
-    component: StatusCreate
-  },
-  {
-    path: '/admin/status/update/:id',
-    name: 'StatusUpdate',
-    component: StatusUpdate
-  },
-  {
-    path: '/admin/prioritas',
-    name: 'PrioritasIndex',
-    component: () => import('../components/Admin/prioritas/index.vue')
-  },
-  {
-    path: '/admin/prioritas/create',
-    name: 'PrioritasCreate',
-    component: () => import('../components/Admin/prioritas/create.vue')
-  },
-  {
-    path: '/admin/prioritas/update/:id',
-    name: 'PrioritasUpdate',
-    component: () => import('../components/Admin/prioritas/update.vue')
-  },
-  {
-    path: '/admin/event',
-    name: 'EventIndex',
-    component: () => import('../components/Admin/Event/index.vue')
-  },
-  {
-    path: '/admin/event/create',
-    name: 'EventCreate',
-    component: () => import('../components/Admin/Event/create.vue')
-  },
-  {
-    path: '/admin/event/update/:id',
-    name: 'EventUpdate',
-    component: () => import('../components/Admin/Event/update.vue')
-  },
-  {
-    path: '/forbidden',
-    name: 'Forbidden',
-    component: Forbidden,
-    meta: { requiresAuth: false, layout: 'auth' }
   },
   {
     path: '/admin/report/update/:id',
@@ -185,6 +101,127 @@ const routes = [
     component: ReportUpdate,
     meta: { requiresAuth: true, layout: 'default' }
   },
+
+  // ===== TIKET ROUTES (FIXED - Urutan Penting!) =====
+  {
+    path: '/tiket',
+    name: 'TiketIndex',
+    component: TiketIndex,
+    meta: { requiresAuth: true, layout: 'default' }  // ✅ UBAH KE 'default' untuk admin layout
+  },
+  {
+    path: '/tiket/create',  // ✅ HARUS SEBELUM :tiket_id
+    name: 'TiketCreate',
+    component: TiketCreate,
+    meta: { requiresAuth: true, layout: 'default' }  // ✅ UBAH KE 'default'
+  },
+  {
+    path: '/tiket/edit/:tiket_id',  // ✅ HARUS SEBELUM :tiket_id
+    name: 'TiketEdit',
+    component: TiketUpdate,
+    meta: { requiresAuth: true, layout: 'default' }  // ✅ UBAH KE 'default'
+  },
+  {
+    path: '/tiket/:tiket_id',  // ✅ Route dinamis TERAKHIR
+    name: 'TiketShow',
+    component: TiketShow,
+    meta: { requiresAuth: true, layout: 'default' }  // ✅ UBAH KE 'default'
+  },
+
+  // ===== Kategori Routes =====
+  {
+    path: '/admin/kategori',
+    name: 'KategoriIndex',
+    component: KategoriIndex,
+    meta: { requiresAuth: true, layout: 'default' }
+  },
+  {
+    path: '/admin/kategori/create',
+    name: 'KategoriCreate',
+    component: KategoriCreate,
+    meta: { requiresAuth: true, layout: 'default' }
+  },
+  {
+    path: '/admin/kategori/update/:id',
+    name: 'KategoriUpdate',
+    component: KategoriUpdate,
+    meta: { requiresAuth: true, layout: 'default' }
+  },
+
+  // ===== Status Routes =====
+  {
+    path: '/admin/status',
+    name: 'StatusIndex',
+    component: StatusIndex,
+    meta: { requiresAuth: true, layout: 'default' }
+  },
+  {
+    path: '/admin/status/create',
+    name: 'StatusCreate',
+    component: StatusCreate,
+    meta: { requiresAuth: true, layout: 'default' }
+  },
+  {
+    path: '/admin/status/update/:id',
+    name: 'StatusUpdate',
+    component: StatusUpdate,
+    meta: { requiresAuth: true, layout: 'default' }
+  },
+
+  // ===== Prioritas Routes =====
+  {
+    path: '/admin/prioritas',
+    name: 'PrioritasIndex',
+    component: () => import('../components/Admin/prioritas/index.vue'),
+    meta: { requiresAuth: true, layout: 'default' }
+  },
+  {
+    path: '/admin/prioritas/create',
+    name: 'PrioritasCreate',
+    component: () => import('../components/Admin/prioritas/create.vue'),
+    meta: { requiresAuth: true, layout: 'default' }
+  },
+  {
+    path: '/admin/prioritas/update/:id',
+    name: 'PrioritasUpdate',
+    component: () => import('../components/Admin/prioritas/update.vue'),
+    meta: { requiresAuth: true, layout: 'default' }
+  },
+
+  // ===== Event Routes =====
+  {
+    path: '/admin/event',
+    name: 'EventIndex',
+    component: () => import('../components/Admin/Event/index.vue'),
+    meta: { requiresAuth: true, layout: 'default' }
+  },
+  {
+    path: '/admin/event/create',
+    name: 'EventCreate',
+    component: () => import('../components/Admin/Event/create.vue'),
+    meta: { requiresAuth: true, layout: 'default' }
+  },
+  {
+    path: '/admin/event/update/:id',
+    name: 'EventUpdate',
+    component: () => import('../components/Admin/Event/update.vue'),
+    meta: { requiresAuth: true, layout: 'default' }
+  },
+
+  // ===== Error Routes =====
+  {
+    path: '/forbidden',
+    name: 'Forbidden',
+    component: Forbidden,
+    meta: { requiresAuth: false, layout: 'auth' }
+  },
+
+  // ===== 404 Not Found =====
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    redirect: '/dashboard'
+  }
 ]
 
 const router = createRouter({
@@ -192,17 +229,44 @@ const router = createRouter({
   routes,
 })
 
-// Middleware: proteksi halaman
+// ===== Navigation Guards =====
 router.beforeEach((to, from, next) => {
   const isAuthenticated = !!localStorage.getItem('token')
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
+
+  // Debug log
+  console.log('Navigation Guard:', {
+    to: to.path,
+    name: to.name,
+    requiresAuth: to.meta.requiresAuth,
+    isAuthenticated
+  })
 
   if (to.meta.requiresAuth && !isAuthenticated) {
+    console.log('Not authenticated, redirecting to login')
     next('/login')
-  } else if ((to.path === '/login' || to.path === '/register') && isAuthenticated) {
-    next('/dashboard')
-  } else {
-    next()
+    return
   }
+
+  if ((to.path === '/login' || to.path === '/register') && isAuthenticated) {
+    console.log('Already authenticated, redirecting to dashboard')
+    next('/dashboard')
+    return
+  }
+
+  if (to.meta.requiresAdmin && user.role !== 'admin') {
+    console.log('Not admin, access forbidden')
+    next('/forbidden')
+    return
+  }
+
+  console.log(' Navigation allowed')
+  next()
+})
+
+router.afterEach((to) => {
+  document.title = to.meta.title || 'Service Portal'
+  window.scrollTo(0, 0)
 })
 
 export default router
